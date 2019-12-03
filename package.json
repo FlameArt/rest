@@ -1,0 +1,23 @@
+{
+  "name": "flamerest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "REST.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlameArt/rest.git"
+  },
+  "keywords": [
+    "rest",
+    "yii2",
+    "js"
+  ],
+  "author": "FlameArt",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FlameArt/rest/issues"
+  },
+  "homepage": "https://github.com/FlameArt/rest#readme"
+}
