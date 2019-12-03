@@ -1,5 +1,5 @@
 
-export default class REST {
+export default class FLAMEREST {
   
   constructor(server_address){
     
