@@ -38,18 +38,22 @@ export default class FLAMEREST {
         
         // Тело ответа формируется в два этапа: сперва заголовки, затем ответ
         let ResolveBody = {};
-        
-        // Делаем запрос
-        fetch(url,
-        {
+  
+        // Тело запроса
+        let requestBody = {
           method: type,
           mode: 'cors',
-          body: params,
           headers: {
             'Content-type': 'application/json; charset=utf-8'
-          },
-        }
-        ).then(response=>{
+          }
+        };
+  
+        if(type!=='GET')
+          requestBody.body = params;
+  
+        // Делаем запрос
+        fetch(url, requestBody)
+        .then(response=>{
           
           // Ответ получен
           
@@ -99,11 +103,11 @@ export default class FLAMEREST {
           
           // Ошибка загрузки, не связанная с ХТТП, например обрыв соединения
           // TODO: на этом этапе стоит сделать, чтобы он пробовал повторить запрос, если это GET
-          
-          console.log('Ошибка загрузки [' + 0 + '] ' + url + ": Нет соединения с сервером");
+  
+          console.log('Ошибка загрузки [' + 0 + '] ' + url + ": " + err.message);
           reject({
             status: 0,
-            message: "Нет соединения с сервером"
+            message: err.message
           });
           
         })
@@ -244,6 +248,12 @@ export default class FLAMEREST {
     
   }
   
+  /**
+   * Получить схемы всех таблиц
+   */
+  getCRUDInfo() {
+    return this.request(this.SERVER + '/site/crudschema', {}, 'GET');
+  }
   
   
 }
