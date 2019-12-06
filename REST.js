@@ -196,9 +196,10 @@ export default class FLAMEREST {
    * @param sortfields
    * @param page
    * @param perPage
+   * @param RemoveDuplicates
    * @return Promise<>
    */
-  get(table, where, expand, fields, sortfields, page, perPage) {
+  get(table, where, expand, fields, sortfields, page, perPage, RemoveDuplicates) {
     
     // Генерим запрос
     let query = this.SERVER + '/api/' + table;
@@ -217,6 +218,11 @@ export default class FLAMEREST {
   
     if(expand !== undefined && expand!==null)
       json.expand = expand;
+    
+    if(RemoveDuplicates !== undefined && RemoveDuplicates!==null)
+      json.RemoveDuplicates = true;
+    
+    
   
     // Страницы
     json['per-page'] = perPage === undefined ? this.perPageDefault : perPage;
