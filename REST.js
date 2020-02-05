@@ -255,6 +255,16 @@ export default class FLAMEREST {
   }
   
   /**
+   * Редактировать значения
+   * @param table
+   * @param ID
+   * @param values
+   */
+  edit(table, ID, values) {
+    return this.request(this.SERVER + '/api/' + table + '/update?id=' + ID, JSON.stringify(values), 'PATCH');
+  }
+  
+  /**
    * Получить схемы всех таблиц
    */
   getCRUDInfo() {
