@@ -58,7 +58,7 @@ export default class FLAMEREST {
           // Ответ получен
           
           // Ответ с ошибкой
-          if (response.status !== 200) {
+          if (!response.ok) {
             console.log('Ошибка загрузки [' + response.status + '] ' + url + ": " + response.statusText);
             reject({
               status: response.status,
@@ -87,15 +87,25 @@ export default class FLAMEREST {
             data: {},
             pages: pages
           };
-          
-          
-          // Декодируем тело ответа
-          return response.json();
+  
+  
+          // Получаем тело ответа
+          return response.text();
           
           
         }).then(response=>{
-          
-          // Декодируем тело ответа и возвращаем успешную загрузку
+  
+          // Декодируем тело ответа, если оно есть
+          if(response===undefined) throw "ERR";
+          if(response==="") response = "{}";
+  
+          try {
+            response = JSON.parse(response);
+          } catch (ex) {
+            throw "ERR";
+          }
+  
+          // Возвращаем успешную загрузку
           ResolveBody.data = response;
           resolve(ResolveBody);
           
