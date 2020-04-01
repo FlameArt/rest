@@ -210,7 +210,10 @@ export default class FLAMEREST {
    * @return Promise<>
    */
   get(table, where, expand, fields, sortfields, page, perPage, RemoveDuplicates) {
-    
+
+    // Нормализуем имена таблиц
+    table = table.replace(/_/g,"");
+
     // Генерим запрос
     let query = this.SERVER + '/api/' + table;
     
@@ -248,7 +251,10 @@ export default class FLAMEREST {
    * @param values
    */
   create(table, values) {
-    
+
+    // Нормализуем имена таблиц
+    table = table.replace(/_/g,"");
+
     return this.request(this.SERVER + '/api/' + table + '/create', JSON.stringify(values), 'POST');
     
   }
@@ -259,7 +265,10 @@ export default class FLAMEREST {
    * @param id
    */
   remove(table, id) {
-    
+
+    // Нормализуем имена таблиц
+    table = table.replace(/_/g,"");
+
     return this.request(this.SERVER + '/api/' + table + '/delete?id=' + id , '{}', 'DELETE');
     
   }
@@ -271,6 +280,10 @@ export default class FLAMEREST {
    * @param values
    */
   edit(table, ID, values) {
+
+    // Нормализуем имена таблиц
+    table = table.replace(/_/g,"");
+
     return this.request(this.SERVER + '/api/' + table + '/update?id=' + ID, JSON.stringify(values), 'PATCH');
   }
   
