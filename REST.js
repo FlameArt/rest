@@ -7,7 +7,8 @@ export default class FLAMEREST {
      * Адрес серва
      * @type {string}
      */
-    this.SERVER = server_address === undefined ? "http://localhost/" : server_address;
+    if(window === undefined && server_address === undefined) this.SERVER = "http://localhost/";
+    if(window !== undefined && server_address === undefined) this.SERVER = window.location.protocol + "//" + window.location.host;
     this.SERVER = this.SERVER.substr(this.SERVER.length-2, 1) === '/' ? this.SERVER.substr(0,this.SERVER.length-1) : this.SERVER;
     
     /**
@@ -17,7 +18,12 @@ export default class FLAMEREST {
     this.perPageDefault = 20;
     
   }
-  
+
+  install(Vue, options) {
+    window.REST = this;
+  }
+
+
   /**
    *
    * @param {string} url Адрес
