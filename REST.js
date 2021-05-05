@@ -9,6 +9,7 @@ export default class FLAMEREST {
      */
     if(window === undefined && server_address === undefined) this.SERVER = "http://localhost/";
     if(window !== undefined && server_address === undefined) this.SERVER = window.location.protocol + "//" + window.location.host;
+    if(server_address !== undefined) this.SERVER = server_address;
     this.SERVER = this.SERVER.substr(this.SERVER.length-2, 1) === '/' ? this.SERVER.substr(0,this.SERVER.length-1) : this.SERVER;
     
     /**
