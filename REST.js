@@ -302,12 +302,12 @@ export default class FLAMEREST {
       return this.request(this.SERVER + '/site/crudschema', {}, 'GET')
           .then(res => {
             // Кешируем схему в браузере на время текущей сессии (в пределах ОДНОЙ вкладки)
-            window.sessionStorage.setItem("crudschema", res);
+            window.sessionStorage.setItem("crudschema", JSON.stringify(res));
             return res;
           });
     }
     else
-      return new Promise((resolve,reject)=>{ resolve(window.sessionStorage.getItem("crudschema"))});
+      return new Promise((resolve,reject)=>{ resolve(JSON.parse(window.sessionStorage.getItem("crudschema")))});
   }
   
   
