@@ -307,7 +307,7 @@ export default class FLAMEREST {
           });
     }
     else
-      return window.sessionStorage.getItem("crudschema");
+      return new Promise((resolve,reject)=>{ resolve(window.sessionStorage.getItem("crudschema"))});
   }
   
   
