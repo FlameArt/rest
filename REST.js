@@ -298,7 +298,16 @@ export default class FLAMEREST {
    * Получить схемы всех таблиц
    */
   getCRUDInfo() {
-    return this.request(this.SERVER + '/site/crudschema', {}, 'GET');
+    if(window.sessionStorage.getItem("crudschema") === null) {
+      return this.request(this.SERVER + '/site/crudschema', {}, 'GET')
+          .then(res => {
+            // Кешируем схему в браузере на время текущей сессии (в пределах ОДНОЙ вкладки)
+            window.sessionStorage.setItem("crudschema", res);
+            return res;
+          });
+    }
+    else
+      return window.sessionStorage.getItem("crudschema");
   }
   
   
