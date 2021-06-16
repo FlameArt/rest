@@ -1,7 +1,7 @@
 
 export default class FLAMEREST {
   
-  constructor(server_address){
+  constructor(server_address, localhost_endpoint){
     
     /**
      * Адрес серва
@@ -11,7 +11,9 @@ export default class FLAMEREST {
     if(window !== undefined && server_address === undefined) this.SERVER = window.location.protocol + "//" + window.location.host;
     if(server_address !== undefined) this.SERVER = server_address;
     this.SERVER = this.SERVER.substr(this.SERVER.length-2, 1) === '/' ? this.SERVER.substr(0,this.SERVER.length-1) : this.SERVER;
-    
+
+    if(window !== undefined && window.location.hostname === 'localhost' && localhost_endpoint !== undefined) this.SERVER = localhost_endpoint;
+
     /**
      * Стандартное число запросов на страницу
      * @type {number}
