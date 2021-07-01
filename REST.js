@@ -323,6 +323,9 @@ export default class FLAMEREST {
     else
       return new Promise((resolve,reject)=>{ resolve(JSON.parse(window.sessionStorage.getItem("crudschema")))});
   }
-  
+
+  auth(username, password) {
+    return this.request(this.SERVER + 'auth/auth', JSON.stringify({login: username, password: password}), 'POST');
+  }
   
 }
