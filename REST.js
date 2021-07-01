@@ -1,7 +1,7 @@
 
 export default class FLAMEREST {
   
-  constructor(server_address, localhost_endpoint){
+  constructor(server_address, localhost_endpoint, unauthorized_callback){
     
     /**
      * Адрес серва
@@ -19,6 +19,11 @@ export default class FLAMEREST {
      * @type {number}
      */
     this.perPageDefault = 20;
+
+    /**
+     * Будет вызван, если любой из запросов вернут требование авторизоваться
+     */
+    this.unauthorized_callback = unauthorized_callback;
     
   }
 
@@ -39,6 +44,8 @@ export default class FLAMEREST {
     if (typeof params === "object") {
       params = JSON.stringify(params);
     }
+
+    let that = this;
     
     // Фетч поддерживается - получаем через него, это быстрее
     if(typeof fetch === "function") {
@@ -113,7 +120,12 @@ export default class FLAMEREST {
           } catch (ex) {
             throw "ERR";
           }
-  
+
+          // Если пришёл ответ: неавторизовано, и указан коллбек авторизации - запускаем его
+          if(response.Auth === false) {
+            if(that.unauthorized_callback !== undefined) {that.unauthorized_callback(); resolve(response); return;}
+          }
+
           // Возвращаем успешную загрузку
           ResolveBody.data = response;
           resolve(ResolveBody);
