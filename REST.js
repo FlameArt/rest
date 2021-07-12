@@ -327,5 +327,9 @@ export default class FLAMEREST {
   auth(username, password) {
     return this.request(this.SERVER + '/auth/auth', JSON.stringify({login: username, password: password}), 'POST');
   }
-  
+
+  logout() {
+    return this.request(this.SERVER + '/auth/logout', '{}', 'POST');
+  }
+
 }
