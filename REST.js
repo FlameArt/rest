@@ -105,11 +105,15 @@ export default class FLAMEREST {
             pages: pages
           };
   
-  
           // Получаем тело ответа
           switch (responseType) {
             case 'json': return response.text();
-            case 'blob': return response.blob();
+            case 'blob': {
+              // Записываем имя файла и mime-тип
+              ResolveBody.filename = response.headers.get('content-disposition').split('filename=')[1].split(';')[0].slice(1, -1);
+              ResolveBody.MimeType = response.headers.get('content-Type');
+              return response.blob();
+            }
           }
 
 
@@ -249,6 +253,8 @@ export default class FLAMEREST {
     // Нормализуем имена таблиц
     table = table.replace(/_/g,"");
 
+    let responseType = "json";
+
     // Генерим запрос
     let query = this.SERVER + '/api/' + table;
     
@@ -270,8 +276,10 @@ export default class FLAMEREST {
     if(RemoveDuplicates !== undefined && RemoveDuplicates!==null)
       json.RemoveDuplicates = true;
 
-    if(format !== undefined && format!==null)
+    if(format !== undefined && format!==null) {
       json.format = format;
+      responseType = "blob";
+    }
 
     
   
@@ -279,7 +287,7 @@ export default class FLAMEREST {
     json['per-page'] = perPage === undefined ? this.perPageDefault : perPage;
     json['page'] = page === undefined ? 1 : page;
     
-    return this.request(query, JSON.stringify(json), 'POST');
+    return this.request(query, JSON.stringify(json), 'POST', responseType);
     
   }
   
