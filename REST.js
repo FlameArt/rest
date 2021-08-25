@@ -230,7 +230,7 @@ export default class FLAMEREST {
    * @param RemoveDuplicates
    * @return Promise<>
    */
-  get(table, where, expand, fields, sortfields, page, perPage, RemoveDuplicates) {
+  get(table, where, expand, fields, sortfields, page, perPage, RemoveDuplicates, format) {
 
     // Нормализуем имена таблиц
     table = table.replace(/_/g,"");
@@ -255,7 +255,10 @@ export default class FLAMEREST {
     
     if(RemoveDuplicates !== undefined && RemoveDuplicates!==null)
       json.RemoveDuplicates = true;
-    
+
+    if(format !== undefined && format!==null)
+      json.format = format;
+
     
   
     // Страницы
