@@ -37,8 +37,9 @@ export default class FLAMEREST {
    * @param {string} url Адрес
    * @param {object|string} params Параметры, которые надо передать, могут быть в виде объекта или строки
    * @param {string} type Тип
+   * @param {string} responseType Тип ответа: json или blob
    */
-  request(url, params, type = 'GET') {
+  request(url, params, type = 'GET', responseType = 'json') {
     
     // Нормализуем параметры, если они есть
     if (typeof params === "object") {
@@ -106,7 +107,12 @@ export default class FLAMEREST {
   
   
           // Получаем тело ответа
-          return response.text();
+          switch (responseType) {
+            case 'json': return response.text();
+            case 'blob': return response.blob();
+          }
+
+
           
           
         }).then(response=>{
@@ -114,7 +120,14 @@ export default class FLAMEREST {
           // Декодируем тело ответа, если оно есть
           if(response===undefined) throw "ERR";
           if(response==="") response = "{}";
-  
+
+          // Если ответ в виде блоба, сразу его отдаём без декодировки
+          if(responseType === 'blob') {
+            ResolveBody.data = response;
+            resolve(ResolveBody);
+            return;
+          }
+
           try {
             response = JSON.parse(response);
           } catch (ex) {
@@ -228,6 +241,7 @@ export default class FLAMEREST {
    * @param page
    * @param perPage
    * @param RemoveDuplicates
+   * @param format
    * @return Promise<>
    */
   get(table, where, expand, fields, sortfields, page, perPage, RemoveDuplicates, format) {
