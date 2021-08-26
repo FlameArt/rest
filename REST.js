@@ -116,9 +116,6 @@ export default class FLAMEREST {
             }
           }
 
-
-          
-          
         }).then(response=>{
   
           // Декодируем тело ответа, если оно есть
@@ -246,9 +243,10 @@ export default class FLAMEREST {
    * @param perPage
    * @param RemoveDuplicates
    * @param format
+   * @param titles Это чтобы мы могли контроллить какие названия полей мы будет загружать при экспорте, чтобы они были как в таблице
    * @return Promise<>
    */
-  get(table, where, expand, fields, sortfields, page, perPage, RemoveDuplicates, format) {
+  get(table, where, expand, fields, sortfields, page, perPage, RemoveDuplicates, format, titles) {
 
     // Нормализуем имена таблиц
     table = table.replace(/_/g,"");
@@ -266,7 +264,10 @@ export default class FLAMEREST {
     
     if(fields !== undefined && fields!==null)
       json.fields = fields;
-    
+
+    if(titles !== undefined && titles!==null)
+      json.titles = titles;
+
     if(sortfields !== undefined && sortfields!==null)
       json.sort = sortfields;
   
