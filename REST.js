@@ -110,7 +110,7 @@ export default class FLAMEREST {
             case 'json': return response.text();
             case 'blob': {
               // Записываем имя файла и mime-тип
-              ResolveBody.filename = response.headers.get('content-disposition').split('filename=')[1].split(';')[0].slice(1, -1);
+              ResolveBody.filename = 'file'; //response.headers.get('content-disposition').split('filename=')[1];
               ResolveBody.MimeType = response.headers.get('content-Type');
               return response.blob();
             }
