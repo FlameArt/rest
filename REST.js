@@ -1,18 +1,18 @@
 
 export default class FLAMEREST {
-  
+
   constructor(server_address, localhost_endpoint, unauthorized_callback){
-    
+
     /**
      * Адрес серва
      * @type {string}
      */
-    if(window === undefined && server_address === undefined) this.SERVER = "http://localhost/";
-    if(window !== undefined && server_address === undefined) this.SERVER = window.location.protocol + "//" + window.location.host;
+    if(typeof window === 'undefined' && server_address === undefined) this.SERVER = "http://localhost/";
+    if(typeof window !== 'undefined' && server_address === undefined) this.SERVER = window.location.protocol + "//" + window.location.host;
     if(server_address !== undefined) this.SERVER = server_address;
     this.SERVER = this.SERVER.substr(this.SERVER.length-2, 1) === '/' ? this.SERVER.substr(0,this.SERVER.length-1) : this.SERVER;
 
-    if(window !== undefined && window.location.hostname === 'localhost' && localhost_endpoint !== undefined) this.SERVER = localhost_endpoint;
+    if(typeof window !== 'undefined' && window.location.hostname === 'localhost' && localhost_endpoint !== undefined) this.SERVER = localhost_endpoint;
 
     /**
      * Стандартное число запросов на страницу
@@ -24,7 +24,7 @@ export default class FLAMEREST {
      * Будет вызван, если любой из запросов вернут требование авторизоваться
      */
     this.unauthorized_callback = unauthorized_callback;
-    
+
   }
 
   install(Vue, options) {
@@ -40,22 +40,22 @@ export default class FLAMEREST {
    * @param {string} responseType Тип ответа: json или blob
    */
   request(url, params, type = 'GET', responseType = 'json') {
-    
+
     // Нормализуем параметры, если они есть
     if (typeof params === "object") {
       params = JSON.stringify(params);
     }
 
     let that = this;
-    
+
     // Фетч поддерживается - получаем через него, это быстрее
     if(typeof fetch === "function") {
-      
+
       return new Promise(async (resolve,reject)=>{
-        
+
         // Тело ответа формируется в два этапа: сперва заголовки, затем ответ
         let ResolveBody = {};
-  
+
         // Тело запроса
         let requestBody = {
           method: type,
@@ -64,16 +64,16 @@ export default class FLAMEREST {
             'Content-type': 'application/json; charset=utf-8'
           }
         };
-  
+
         if(type!=='GET')
           requestBody.body = params;
-  
+
         // Делаем запрос
         fetch(url, requestBody)
         .then(response=>{
-          
+
           // Ответ получен
-          
+
           // Ответ с ошибкой
           if (!response.ok) {
             console.log('Ошибка загрузки [' + response.status + '] ' + url + ": " + response.statusText);
@@ -83,9 +83,9 @@ export default class FLAMEREST {
             });
             return;
           }
-          
+
           // Загрузка успешна
-          
+
           // Если в заголовках указана паджинация
           let pages = undefined;
           if (response.headers.get('X-Pagination-Current-Page') !== null) {
@@ -96,7 +96,7 @@ export default class FLAMEREST {
               total: parseInt(response.headers.get('X-Pagination-Total-Count')),
             }
           }
-          
+
           // Заполняем тело ответа заголовками
           ResolveBody = {
             status: response.status,
@@ -104,7 +104,7 @@ export default class FLAMEREST {
             data: {},
             pages: pages
           };
-  
+
           // Получаем тело ответа
           switch (responseType) {
             case 'json': return response.text();
@@ -117,7 +117,7 @@ export default class FLAMEREST {
           }
 
         }).then(response=>{
-  
+
           // Декодируем тело ответа, если оно есть
           if(response===undefined) throw "ERR";
           if(response==="") response = "{}";
@@ -143,48 +143,48 @@ export default class FLAMEREST {
           // Возвращаем успешную загрузку
           ResolveBody.data = response;
           resolve(ResolveBody);
-          
+
         }).catch(err=>{
-          
+
           // Ошибка загрузки, не связанная с ХТТП, например обрыв соединения
           // TODO: на этом этапе стоит сделать, чтобы он пробовал повторить запрос, если это GET
-  
+
           console.log('Ошибка загрузки [' + 0 + '] ' + url + ": " + err.message);
           reject({
             status: 0,
             message: err.message
           });
-          
+
         })
-        
+
       });
-      
+
     }
-    
-    
+
+
     // Фетч не поддерживается - возвращаем промисифицированный XHR
     else {
-      
+
       return new Promise((resolve, reject) => {
-        
+
         // Генерим новый запрос
         let xhr = new XMLHttpRequest();
         xhr.open(type, url, true);
-        
+
         // Автоматический парсинг json ответа
         xhr.responseType = 'json';
-        
+
         // Запрос тоже в json
         xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-        
+
         // Запрос между доменами свободный, если это dev-среда
         xhr.withCredentials = false;
-        
+
         // Отправляем запрос
         xhr.send(params === undefined ? null : params);
-        
+
         xhr.onload = function () {
-          
+
           // Ошибка загрузки
           if (xhr.status !== 200) {
             console.log('Ошибка загрузки [' + xhr.status + '] ' + url + ": " + xhr.statusText);
@@ -193,9 +193,9 @@ export default class FLAMEREST {
               message: xhr.statusText
             });
           }
-          
+
           // Загрузка успешна
-          
+
           // Если в заголовках указана паджинация
           let pages = undefined;
           if (xhr.getResponseHeader('X-Pagination-Current-Page') !== null) {
@@ -206,8 +206,8 @@ export default class FLAMEREST {
               total: parseInt(xhr.getResponseHeader('X-Pagination-Total-Count')),
             }
           }
-          
-          
+
+
           return resolve({
             status: xhr.status,
             type: xhr.responseType,
@@ -215,7 +215,7 @@ export default class FLAMEREST {
             pages: pages
           });
         };
-        
+
         // Ошибка загрузки, не связанная с ХТТП, например обрыв соединения
         // TODO: на этом этапе стоит сделать, чтобы он пробовал повторить запрос, если это GET
         xhr.onerror = function () {
@@ -225,13 +225,13 @@ export default class FLAMEREST {
             message: "Нет соединения с сервером"
           });
         };
-        
+
       });
-      
+
     }
-    
+
   }
-  
+
   /**
    * Получить выборку из таблицы через REST
    * @param table
@@ -255,13 +255,13 @@ export default class FLAMEREST {
 
     // Генерим запрос
     let query = this.SERVER + '/api/' + table;
-    
+
     let json = {};
-    
+
     // Генерим условия
     if(where!==undefined && where!==null)
       json.where = where;
-    
+
     if(fields !== undefined && fields!==null)
       json.fields = fields;
 
@@ -270,10 +270,10 @@ export default class FLAMEREST {
 
     if(sortfields !== undefined && sortfields!==null)
       json.sort = sortfields;
-  
+
     if(expand !== undefined && expand!==null)
       json.expand = expand;
-    
+
     if(RemoveDuplicates !== undefined && RemoveDuplicates!==null)
       json.RemoveDuplicates = true;
 
@@ -282,16 +282,16 @@ export default class FLAMEREST {
       responseType = "blob";
     }
 
-    
-  
+
+
     // Страницы
     json['per-page'] = perPage === undefined ? this.perPageDefault : perPage;
     json['page'] = page === undefined ? 1 : page;
-    
+
     return this.request(query, JSON.stringify(json), 'POST', responseType);
-    
+
   }
-  
+
   /**
    * Создать новую запись
    * @param table
@@ -303,9 +303,9 @@ export default class FLAMEREST {
     table = table.replace(/_/g,"");
 
     return this.request(this.SERVER + '/api/' + table + '/create', JSON.stringify(values), 'POST');
-    
+
   }
-  
+
   /**
    * Удалить запись
    * @param table
@@ -317,9 +317,9 @@ export default class FLAMEREST {
     table = table.replace(/_/g,"");
 
     return this.request(this.SERVER + '/api/' + table + '/delete?id=' + id , '{}', 'DELETE');
-    
+
   }
-  
+
   /**
    * Редактировать значения
    * @param table
@@ -333,7 +333,7 @@ export default class FLAMEREST {
 
     return this.request(this.SERVER + '/api/' + table + '/update?id=' + ID, JSON.stringify(values), 'PATCH');
   }
-  
+
   /**
    * Получить схемы всех таблиц
    */
