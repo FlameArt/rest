@@ -156,7 +156,7 @@ export default class FLAMEREST {
           ResolveBody.data = response;
           resolve(ResolveBody);
 
-        }).catch(err=>{
+        }).catch(async err=>{
 
           // Ошибка загрузки любого типа
           // TODO: на этом этапе стоит сделать, чтобы он пробовал повторить запрос, если это GET
@@ -166,6 +166,10 @@ export default class FLAMEREST {
               status: 0,
               message: '',
             };
+          }
+
+          if(typeof err.body === 'object') {
+            err.body = await err.body;
           }
 
           console.log('Ошибка загрузки [' + 0 + '] ' + url + ": " + err.message);
