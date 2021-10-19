@@ -76,12 +76,24 @@ export default class FLAMEREST {
 
           // Ответ с ошибкой
           if (!response.ok) {
+
+            // Тело ошибки
+            let error_body = null;
+            try {
+              error_body = response.json();
+            }
+            catch (exjson){
+              error_body = response.text();
+            }
+
             console.log('Ошибка загрузки [' + response.status + '] ' + url + ": " + response.statusText);
-            reject({
+
+            throw {
               status: response.status,
-              message: response.statusText
-            });
-            return;
+              message: response.statusText,
+              body: error_body
+            }
+
           }
 
           // Загрузка успешна
@@ -146,14 +158,19 @@ export default class FLAMEREST {
 
         }).catch(err=>{
 
-          // Ошибка загрузки, не связанная с ХТТП, например обрыв соединения
+          // Ошибка загрузки любого типа
           // TODO: на этом этапе стоит сделать, чтобы он пробовал повторить запрос, если это GET
 
+          if(typeof err !== 'object' || err.message === undefined) {
+            err = {
+              status: 0,
+              message: '',
+            };
+          }
+
           console.log('Ошибка загрузки [' + 0 + '] ' + url + ": " + err.message);
-          reject({
-            status: 0,
-            message: err.message
-          });
+
+          reject(err);
 
         })
 
