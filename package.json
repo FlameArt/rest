@@ -1,8 +1,9 @@
 {
   "name": "flamerest",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "",
   "main": "REST.js",
+  "typings": "./REST.d.ts",
   "scripts": {},
   "repository": {
     "type": "git",

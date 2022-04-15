@@ -1,5 +1,5 @@
 
-export default class FLAMEREST {
+class FLAMEREST {
 
   constructor(server_address, localhost_endpoint, unauthorized_callback){
 
@@ -375,8 +375,19 @@ export default class FLAMEREST {
     return this.request(this.SERVER + '/auth/auth', JSON.stringify({login: username, password: password}), 'POST');
   }
 
+  signup(username, password) {
+    return this.request(this.SERVER + '/auth/signup', JSON.stringify({login: username, password: password}), 'POST');
+  }
+
   logout() {
     return this.request(this.SERVER + '/auth/logout', '{}', 'POST');
   }
 
 }
+
+
+if(!window.REST) {
+  window.REST = new FLAMEREST();
+}
+
+export default window.REST;
