@@ -1,10 +1,12 @@
 {
   "name": "flamerest",
-  "version": "1.0.18",
+  "version": "1.0.20",
   "description": "",
   "main": "REST.js",
   "typings": "./REST.d.ts",
-  "scripts": {},
+  "scripts": {
+    "push and publish": "git push && npm --no-git-tag-version version patch && npm publish"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/FlameArt/rest.git"

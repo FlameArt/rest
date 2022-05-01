@@ -1,18 +1,18 @@
 
 class FLAMEREST {
 
-  constructor(server_address, localhost_endpoint, unauthorized_callback){
+  constructor(server_address, localhost_endpoint, unauthorized_callback) {
 
     /**
      * Адрес серва
      * @type {string}
      */
-    if(typeof window === 'undefined' && server_address === undefined) this.SERVER = "http://localhost/";
-    if(typeof window !== 'undefined' && server_address === undefined) this.SERVER = window.location.protocol + "//" + window.location.host;
-    if(server_address !== undefined) this.SERVER = server_address;
-    this.SERVER = this.SERVER.substr(this.SERVER.length-2, 1) === '/' ? this.SERVER.substr(0,this.SERVER.length-1) : this.SERVER;
+    if (typeof window === 'undefined' && server_address === undefined) this.SERVER = "http://localhost/";
+    if (typeof window !== 'undefined' && server_address === undefined) this.SERVER = window.location.protocol + "//" + window.location.host;
+    if (server_address !== undefined) this.SERVER = server_address;
+    this.SERVER = this.SERVER.substr(this.SERVER.length - 2, 1) === '/' ? this.SERVER.substr(0, this.SERVER.length - 1) : this.SERVER;
 
-    if(typeof window !== 'undefined' && window.location.hostname === 'localhost' && localhost_endpoint !== undefined) this.SERVER = localhost_endpoint;
+    if (typeof window !== 'undefined' && window.location.hostname === 'localhost' && localhost_endpoint !== undefined) this.SERVER = localhost_endpoint;
 
     /**
      * Стандартное число запросов на страницу
@@ -49,50 +49,66 @@ class FLAMEREST {
     let that = this;
 
     // Фетч поддерживается - получаем через него, это быстрее
-    if(typeof fetch === "function") {
+    if (typeof fetch === "function") {
 
-      return new Promise(async (resolve,reject)=>{
+      return new Promise(async (resolve, reject) => {
 
-        // Тело ответа формируется в два этапа: сперва заголовки, затем ответ
-        let ResolveBody = {};
+        try {
 
-        // Тело запроса
-        let requestBody = {
-          method: type,
-          mode: 'cors',
-          headers: {
-            'Content-type': 'application/json; charset=utf-8'
-          }
-        };
+          // Тело запроса
+          let requestBody = {
+            method: type,
+            mode: 'cors',
+            headers: {
+              'Content-type': 'application/json; charset=utf-8'
+            }
+          };
 
-        if(type!=='GET')
-          requestBody.body = params;
+          if (type !== 'GET')
+            requestBody.body = params;
 
-        // Делаем запрос
-        fetch(url, requestBody)
-        .then(response=>{
+          // Делаем запрос
+          let response = await fetch(url, requestBody);
 
-          // Ответ получен
+          // Тело ответа формируется в два этапа: сперва заголовки, затем ответ
+          let ResolveBody = {
+            status: response.status,
+            ok: response.ok
+          };
 
           // Ответ с ошибкой
           if (!response.ok) {
 
             // Тело ошибки
-            let error_body = null;
+            ResolveBody.message = response.statusText;
+
             try {
-              error_body = response.json();
+
+              ResolveBody.errors = await response.json();
+
+              // Ошибки
+              switch (ResolveBody.status) {
+
+                // Ошибка валидации: Собираем все ошибки полей
+                case 422:
+                  let Errs = {};
+                  for(let err of ResolveBody.errors) {
+                    Errs[err['field']] = Errs[err['field']] === undefined ? err['message'] : Errs[err['field']] + ". " + err['message']
+                  }
+                  ResolveBody.errors = Errs;
+              }
+
             }
-            catch (exjson){
-              error_body = response.text();
+            catch (exjson) {
+              ResolveBody.errors = await response.text();
             }
 
-            console.log('Ошибка загрузки [' + response.status + '] ' + url + ": " + response.statusText);
+            // Рапортуем об ошибке
+            console.error('Ошибка загрузки [' + response.status + '] ' + url + ": " + response.statusText, ResolveBody, ResolveBody.errors);
 
-            throw {
-              status: response.status,
-              message: response.statusText,
-              body: error_body
-            }
+            // Возвращаем управление, которое работает без блока catch, достаточно проверить на if(response.errors)
+            resolve(ResolveBody);
+            return;
 
           }
 
@@ -110,65 +126,74 @@ class FLAMEREST {
           }
 
           // Заполняем тело ответа заголовками
-          ResolveBody = {
-            status: response.status,
-            type: "json",
-            data: {},
-            pages: pages
-          };
+          ResolveBody.type = "json";
+          ResolveBody.data = {};
+          ResolveBody.pages = pages;
 
           // Получаем тело ответа
           switch (responseType) {
-            case 'json': return response.text();
+            case 'json': ResolveBody.data = await response.text(); break;
             case 'blob': {
               // Записываем имя файла и mime-тип
               ResolveBody.filename = 'file'; //response.headers.get('content-disposition').split('filename=')[1];
               ResolveBody.MimeType = response.headers.get('content-Type');
-              return response.blob();
+              ResolveBody.data = await response.blob();
+
+              // Если ответ в виде блоба, сразу его отдаём без декодировки
+              resolve(ResolveBody);
+              return;
             }
           }
 
-        }).then(response=>{
-
           // Декодируем тело ответа, если оно есть
-          if(response===undefined) throw "ERR";
-          if(response==="") response = "{}";
-
-          // Если ответ в виде блоба, сразу его отдаём без декодировки
-          if(responseType === 'blob') {
-            ResolveBody.data = response;
+          if (ResolveBody.data === undefined) {
+            ResolveBody.errors = ["Принятый ответ пуст"];
+            console.error("Принятый ответ пуст", ResolveBody);
             resolve(ResolveBody);
+            return;
+          };
+
+          // Пустой ответ конвертируем в валидный пустой объект
+          if (ResolveBody.data === "") ResolveBody.data = "{}";
+
+          // Декодируем
+          try {
+            ResolveBody.data = JSON.parse(ResolveBody.data);
+          } catch (ex) {
+            ResolveBody.errors = ["Ошибка декодирования"];
+            console.error("Ошибка декодирования", ResolveBody);
+            reject(ResolveBody);
             return;
           }
 
-          try {
-            response = JSON.parse(response);
-          } catch (ex) {
-            throw "ERR";
-          }
+          // Декодинг успешен
 
           // Если пришёл ответ: неавторизовано, и указан коллбек авторизации - запускаем его
-          if(response.Auth === false) {
-            if(that.unauthorized_callback !== undefined) {that.unauthorized_callback(); resolve(response); return;}
+          if (response.Auth === false) {
+            if (that.unauthorized_callback !== undefined) { that.unauthorized_callback(); resolve(response); return; }
           }
 
+
           // Возвращаем успешную загрузку
-          ResolveBody.data = response;
           resolve(ResolveBody);
 
-        }).catch(async err=>{
+          return;
+
+        }
+
+        catch (err) {
 
           // Ошибка загрузки любого типа
           // TODO: на этом этапе стоит сделать, чтобы он пробовал повторить запрос, если это GET
 
-          if(typeof err !== 'object' || err.message === undefined) {
+          if (typeof err !== 'object' || err.message === undefined) {
             err = {
               status: 0,
               message: '',
             };
           }
 
-          if(typeof err.body === 'object') {
+          if (typeof err.body === 'object') {
             err.body = await err.body;
           }
 
@@ -176,7 +201,7 @@ class FLAMEREST {
 
           reject(err);
 
-        })
+        }
 
       });
 
@@ -270,7 +295,7 @@ class FLAMEREST {
   get(table, where, expand, fields, sortfields, page, perPage, RemoveDuplicates, format, titles) {
 
     // Нормализуем имена таблиц
-    table = table.replace(/_/g,"");
+    table = table.replace(/_/g, "");
 
     let responseType = "json";
 
@@ -280,25 +305,25 @@ class FLAMEREST {
     let json = {};
 
     // Генерим условия
-    if(where!==undefined && where!==null)
+    if (where !== undefined && where !== null)
       json.where = where;
 
-    if(fields !== undefined && fields!==null)
+    if (fields !== undefined && fields !== null)
       json.fields = fields;
 
-    if(titles !== undefined && titles!==null)
+    if (titles !== undefined && titles !== null)
       json.titles = titles;
 
-    if(sortfields !== undefined && sortfields!==null)
+    if (sortfields !== undefined && sortfields !== null)
       json.sort = sortfields;
 
-    if(expand !== undefined && expand!==null)
+    if (expand !== undefined && expand !== null)
       json.expand = expand;
 
-    if(RemoveDuplicates !== undefined && RemoveDuplicates!==null)
+    if (RemoveDuplicates !== undefined && RemoveDuplicates !== null)
       json.RemoveDuplicates = true;
 
-    if(format !== undefined && format!==null) {
+    if (format !== undefined && format !== null) {
       json.format = format;
       responseType = "blob";
     }
@@ -314,6 +339,31 @@ class FLAMEREST {
   }
 
   /**
+   * Получить все записи по запросу [постранично]
+   * @param {string} table 
+   * @param {object} params 
+   * @returns {object}
+   */
+  all(table, params) {
+    return this.get(table, params.where, null, params.fields, params.sort, params.page, params.perPage);
+  }
+
+  /**
+   * Получить одну запись по ID
+   * @param {string} table 
+   * @param {number|string} id 
+   * @param {object|Array} fields 
+   * @param {string} primaryKeyName 
+   * @returns {object}
+   */
+  async one(table, id, fields = null, primaryKeyName = 'id') {
+    let resp = await this.get(table, {[primaryKeyName]:id}, null, fields, null, 1, 1);
+    if(resp.errors) return resp;
+    if(resp.data.length === 0) return resp;
+    return resp.data[0];
+  }
+
+  /**
    * Создать новую запись
    * @param table
    * @param values
@@ -321,7 +371,20 @@ class FLAMEREST {
   create(table, values) {
 
     // Нормализуем имена таблиц
-    table = table.replace(/_/g,"");
+    table = table.replace(/_/g, "");
+
+    // Если в один из параметров передан FileList, т.е. нужно загрузить файлы
+    for (let val in values)
+      if (val instanceof FileList) {
+        let newValues = [];
+        for (let file in val) {
+          newValues.push({
+            'mime': 'jpg',
+            'size': 23,
+            'data': btoa(val)
+          });
+        }
+      }
 
     return this.request(this.SERVER + '/api/' + table + '/create', JSON.stringify(values), 'POST');
 
@@ -335,9 +398,9 @@ class FLAMEREST {
   remove(table, id) {
 
     // Нормализуем имена таблиц
-    table = table.replace(/_/g,"");
+    table = table.replace(/_/g, "");
 
-    return this.request(this.SERVER + '/api/' + table + '/delete?id=' + id , '{}', 'DELETE');
+    return this.request(this.SERVER + '/api/' + table + '/delete?id=' + id, '{}', 'DELETE');
 
   }
 
@@ -350,7 +413,7 @@ class FLAMEREST {
   edit(table, ID, values) {
 
     // Нормализуем имена таблиц
-    table = table.replace(/_/g,"");
+    table = table.replace(/_/g, "");
 
     return this.request(this.SERVER + '/api/' + table + '/update?id=' + ID, JSON.stringify(values), 'PATCH');
   }
@@ -359,24 +422,24 @@ class FLAMEREST {
    * Получить схемы всех таблиц
    */
   getCRUDInfo() {
-    if(window.sessionStorage.getItem("crudschema") === null) {
+    if (window.sessionStorage.getItem("crudschema") === null) {
       return this.request(this.SERVER + '/site/crudschema', {}, 'GET')
-          .then(res => {
-            // Кешируем схему в браузере на время текущей сессии (в пределах ОДНОЙ вкладки)
-            window.sessionStorage.setItem("crudschema", JSON.stringify(res));
-            return res;
-          });
+        .then(res => {
+          // Кешируем схему в браузере на время текущей сессии (в пределах ОДНОЙ вкладки)
+          window.sessionStorage.setItem("crudschema", JSON.stringify(res));
+          return res;
+        });
     }
     else
-      return new Promise((resolve,reject)=>{ resolve(JSON.parse(window.sessionStorage.getItem("crudschema")))});
+      return new Promise((resolve, reject) => { resolve(JSON.parse(window.sessionStorage.getItem("crudschema"))) });
   }
 
   auth(username, password) {
-    return this.request(this.SERVER + '/auth/auth', JSON.stringify({login: username, password: password}), 'POST');
+    return this.request(this.SERVER + '/auth/auth', JSON.stringify({ login: username, password: password }), 'POST');
   }
 
   signup(username, password) {
-    return this.request(this.SERVER + '/auth/signup', JSON.stringify({login: username, password: password}), 'POST');
+    return this.request(this.SERVER + '/auth/signup', JSON.stringify({ login: username, password: password }), 'POST');
   }
 
   logout() {
@@ -386,7 +449,7 @@ class FLAMEREST {
 }
 
 
-if(!window.REST) {
+if (!window.REST) {
   window.REST = new FLAMEREST();
 }
 
