@@ -17,3 +17,7 @@ or
 import FLAMEREST from "flamerest";
 window.REST = new FLAMEREST('localhost');
 ```
+
+# Create and Update
+
+Just field list, but any field can be HTML Input, or FileList (automatically restify that)

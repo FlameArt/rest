@@ -368,23 +368,27 @@ class FLAMEREST {
    * @param table
    * @param values
    */
-  create(table, values) {
+  async create(table, values) {
 
     // Нормализуем имена таблиц
     table = table.replace(/_/g, "");
 
-    // Если в один из параметров передан FileList, т.е. нужно загрузить файлы
-    for (let val in values)
-      if (val instanceof FileList) {
+    // Если в один из параметров передан FileList или input[type=file], т.е. нужно загрузить файлы
+    for (let val in values) {
+      // Преобразуем
+      if(values[val] instanceof HTMLInputElement && values[val].type === 'file') values[val] = values[val].files;
+      if (values[val] instanceof FileList) {
         let newValues = [];
-        for (let file in val) {
+        values[val] = Array.from(values[val]);
+        for (let file in values[val]) {
           newValues.push({
-            'mime': 'jpg',
-            'size': 23,
-            'data': btoa(val)
+            'name': values[val][file].name,
+            'data': await this.readFileAsync(values[val][file])
           });
         }
+        values[val] = newValues;
       }
+    }
 
     return this.request(this.SERVER + '/api/' + table + '/create', JSON.stringify(values), 'POST');
 
@@ -410,10 +414,27 @@ class FLAMEREST {
    * @param ID
    * @param values
    */
-  edit(table, ID, values) {
+  async edit(table, ID, values) {
 
     // Нормализуем имена таблиц
     table = table.replace(/_/g, "");
+
+    // Если в один из параметров передан FileList или input[type=file], т.е. нужно загрузить файлы
+    for (let val in values) {
+      // Преобразуем
+      if(values[val] instanceof HTMLInputElement && values[val].type === 'file') values[val] = values[val].files;
+      if (values[val] instanceof FileList) {
+        let newValues = [];
+        values[val] = Array.from(values[val]);
+        for (let file in values[val]) {
+          newValues.push({
+            'name': values[val][file].name,
+            'data': await this.readFileAsync(values[val][file])
+          });
+        }
+        values[val] = newValues;
+      }
+    }
 
     return this.request(this.SERVER + '/api/' + table + '/update?id=' + ID, JSON.stringify(values), 'PATCH');
   }
@@ -444,6 +465,25 @@ class FLAMEREST {
 
   logout() {
     return this.request(this.SERVER + '/auth/logout', '{}', 'POST');
+  }
+
+  /**
+   * Прочесть файл асинхронно
+   * @param {File} file 
+   * @returns {Promise<string>}
+   */
+  readFileAsync(file) {
+    return new Promise((resolve, reject) => {
+      let reader = new FileReader();
+  
+      reader.onloadend = () => {
+        resolve(reader.result);
+      };
+  
+      reader.onerror = reject;
+  
+      reader.readAsDataURL(file);
+    })
   }
 
 }
