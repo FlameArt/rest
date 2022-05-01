@@ -21,7 +21,7 @@ export function request(url: string, params: object | string, type: string = 'GE
  * @param titles Это чтобы мы могли контроллить какие названия полей мы будет загружать при экспорте, чтобы они были как в таблице
  * @return Promise<object>
  */
-export function get(table: string, where: object | string | null, expand: object | string | null, fields: object | Array | string | null, sortfields: object | Array | string | null, page: number, perPage: number, RemoveDuplicates, format, titles): object
+export function get(table: string, where: object | string | null, expand: object | string | null, fields: object | Array<string> | string | null, sortfields: object | Array<string> | string | null, page: number, perPage: number, RemoveDuplicates, format, titles): object
 
 /**
  * Получить все записи по запросу [постранично]
@@ -29,7 +29,7 @@ export function get(table: string, where: object | string | null, expand: object
  * @param {object} params 
  * @returns 
  */
-export function all(table: string, params: {where: object, fields: object|Array, sort: Array, page: number, perPage: number}): object;
+export function all(table: string, params: {where: object, fields: object|Array<string>, sort: Array<string>, page: number, perPage: number}): object;
 
 /**
  * Получить одну запись по её ID
@@ -38,7 +38,7 @@ export function all(table: string, params: {where: object, fields: object|Array,
  * @param fields 
  * @param primaryKeyName 
  */
-export function one(table: string, id: number|string, fields: object|Array, primaryKeyName: string): object;
+export function one(table: string, id: number|string, fields: object|Array<string>, primaryKeyName: string): object;
 
 /**
  * Создать новую запись
