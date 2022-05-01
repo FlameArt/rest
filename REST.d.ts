@@ -5,7 +5,7 @@
  * @param {string} type Тип
  * @param {string} responseType Тип ответа: json или blob
  */
-export function request(url: string, params: object | string, type: string = 'GET', responseType: string = 'json'): object
+export function request(url: string, params: object | string, type: string, responseType: string): object
 
 /**
  * Получить выборку из таблицы через REST
