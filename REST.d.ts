@@ -85,3 +85,10 @@ export function signup(username: string, password: string);
  * Выйти из системы
  */
 export function logout(): object;
+
+/**
+ * Подготовить объект под загрузку: загрузить данные из элементов [type=file]
+ * @param values 
+ */
+export function prepare(values: object): object;
+

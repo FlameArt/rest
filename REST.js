@@ -373,22 +373,8 @@ class FLAMEREST {
     // Нормализуем имена таблиц
     table = table.replace(/_/g, "");
 
-    // Если в один из параметров передан FileList или input[type=file], т.е. нужно загрузить файлы
-    for (let val in values) {
-      // Преобразуем
-      if(values[val] instanceof HTMLInputElement && values[val].type === 'file') values[val] = values[val].files;
-      if (values[val] instanceof FileList) {
-        let newValues = [];
-        values[val] = Array.from(values[val]);
-        for (let file in values[val]) {
-          newValues.push({
-            'name': values[val][file].name,
-            'data': await this.readFileAsync(values[val][file])
-          });
-        }
-        values[val] = newValues;
-      }
-    }
+    // Подготовить значения
+    await this.prepare(values);
 
     return this.request(this.SERVER + '/api/' + table + '/create', JSON.stringify(values), 'POST');
 
@@ -419,22 +405,8 @@ class FLAMEREST {
     // Нормализуем имена таблиц
     table = table.replace(/_/g, "");
 
-    // Если в один из параметров передан FileList или input[type=file], т.е. нужно загрузить файлы
-    for (let val in values) {
-      // Преобразуем
-      if(values[val] instanceof HTMLInputElement && values[val].type === 'file') values[val] = values[val].files;
-      if (values[val] instanceof FileList) {
-        let newValues = [];
-        values[val] = Array.from(values[val]);
-        for (let file in values[val]) {
-          newValues.push({
-            'name': values[val][file].name,
-            'data': await this.readFileAsync(values[val][file])
-          });
-        }
-        values[val] = newValues;
-      }
-    }
+    // Подготовить значения
+    await this.prepare(values);
 
     return this.request(this.SERVER + '/api/' + table + '/update?id=' + ID, JSON.stringify(values), 'PATCH');
   }
@@ -465,6 +437,34 @@ class FLAMEREST {
 
   logout() {
     return this.request(this.SERVER + '/auth/logout', '{}', 'POST');
+  }
+
+
+  /**
+   * Подготовить объект под загрузку: загрузить данные из элементов [type=file]
+   * @param {object} values 
+   */
+  async prepare(values) {
+
+    // Если в один из параметров передан FileList или input[type=file], т.е. нужно загрузить файлы
+    for (let val in values) {
+      // Преобразуем
+      if (values[val] instanceof HTMLInputElement && values[val].type === 'file') values[val] = values[val].files;
+      if (values[val] instanceof FileList) {
+        let newValues = [];
+        values[val] = Array.from(values[val]);
+        for (let file in values[val]) {
+          newValues.push({
+            'name': values[val][file].name,
+            'data': await this.readFileAsync(values[val][file])
+          });
+        }
+        values[val] = newValues;
+      }
+    }
+
+    return values;
+
   }
 
   /**
