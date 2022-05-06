@@ -1,7 +1,7 @@
 
 class FLAMEREST {
 
-  constructor(server_address, localhost_endpoint, unauthorized_callback) {
+  constructor(server_address, localhost_endpoint, unauthorized_callback, version) {
 
     /**
      * Адрес серва
@@ -24,6 +24,11 @@ class FLAMEREST {
      * Будет вызван, если любой из запросов вернут требование авторизоваться
      */
     this.unauthorized_callback = unauthorized_callback;
+
+    /**
+     * Версия api
+     */
+    this.version = version ? version : 'v1';
 
   }
 
@@ -300,7 +305,7 @@ class FLAMEREST {
     let responseType = "json";
 
     // Генерим запрос
-    let query = this.SERVER + '/api/' + table;
+    let query = this.SERVER + '/api/' + this.version + '/' + table;
 
     let json = {};
 
@@ -376,7 +381,7 @@ class FLAMEREST {
     // Подготовить значения
     await this.prepare(values);
 
-    return this.request(this.SERVER + '/api/' + table + '/create', JSON.stringify(values), 'POST');
+    return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/create', JSON.stringify(values), 'POST');
 
   }
 
@@ -390,7 +395,7 @@ class FLAMEREST {
     // Нормализуем имена таблиц
     table = table.replace(/_/g, "");
 
-    return this.request(this.SERVER + '/api/' + table + '/delete?id=' + id, '{}', 'DELETE');
+    return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/delete?id=' + id, '{}', 'DELETE');
 
   }
 
@@ -408,7 +413,7 @@ class FLAMEREST {
     // Подготовить значения
     await this.prepare(values);
 
-    return this.request(this.SERVER + '/api/' + table + '/update?id=' + ID, JSON.stringify(values), 'PATCH');
+    return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/update?id=' + ID, JSON.stringify(values), 'PATCH');
   }
 
   /**
