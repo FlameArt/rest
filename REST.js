@@ -455,6 +455,8 @@ class FLAMEREST {
     for (let val in values) {
       // Преобразуем
       if (values[val] instanceof HTMLInputElement && values[val].type === 'file') values[val] = values[val].files;
+      if (values[val] instanceof ClipboardEvent) values[val] = values[val].clipboardData.files;
+      if (values[val] instanceof DataTransfer) values[val] = values[val].files;
       if (values[val] instanceof FileList) {
         let newValues = [];
         values[val] = Array.from(values[val]);
