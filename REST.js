@@ -396,10 +396,10 @@ class FLAMEREST {
     // Нормализуем имена таблиц
     table = table.replace(/_/g, "");
 
-    params = {};
+    let params = {};
     if(byFields instanceof Object) params = byFields;
     
-    return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/delete?id=' + id, params, 'DELETE');
+    return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/delete?id=' + id, JSON.stringify(params), 'DELETE');
 
   }
 
