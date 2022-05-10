@@ -20,4 +20,8 @@ window.REST = new FLAMEREST('localhost');
 
 # Create and Update
 
-Just field list, but any field can be HTML Input, or FileList (automatically restify that)
+Just field list, but any field can be HTML Input [type=file], Clipboard object, DataTransfer [Drag&Drop/Clipboard] or FileList (automatically upload any of that)
+
+# Delete
+
+Function `Remove`. Can delete row by primaryKey - second parameter, or mass delete by fields condition - third parameter with fields

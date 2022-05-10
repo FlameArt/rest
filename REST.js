@@ -389,13 +389,17 @@ class FLAMEREST {
    * Удалить запись
    * @param table
    * @param id
+   * @param byFields
    */
-  remove(table, id) {
+  remove(table, id = 0, byFields = null) {
 
     // Нормализуем имена таблиц
     table = table.replace(/_/g, "");
 
-    return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/delete?id=' + id, '{}', 'DELETE');
+    params = {};
+    if(byFields instanceof Object) params = byFields;
+    
+    return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/delete?id=' + id, params, 'DELETE');
 
   }
 
@@ -446,7 +450,7 @@ class FLAMEREST {
 
 
   /**
-   * Подготовить объект под загрузку: загрузить данные из элементов [type=file]
+   * Подготовить объект под загрузку: загрузить данные из элементов Input [type=file] / Clipboard / DataTransfer [Drag&Drop/Clipboard]
    * @param {object} values 
    */
   async prepare(values) {

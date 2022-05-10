@@ -51,8 +51,9 @@ export function create(table: string, values: object)
  * Удалить запись
  * @param table
  * @param id
+ * @param byFields Если указан, удаляет по этим параметрам
  */
-export function remove(table: string, id: number | string)
+export function remove(table: string, id: number | string, byFields: object)
 
 /**
  * Редактировать значения
