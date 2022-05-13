@@ -21,7 +21,7 @@ export function request(url: string, params: object | string, type?: string, res
  * @param titles Это чтобы мы могли контроллить какие названия полей мы будет загружать при экспорте, чтобы они были как в таблице
  * @return Promise<object>
  */
-export function get(table: string, where?: object | string | null, expand?: object | string | null, fields?: object | Array<string> | string | null, sortfields?: object | Array<string> | string | null, page?: number, perPage?: number, RemoveDuplicates?, format?, titles?): object
+export function get<T>(table: string, where?: object | string | null, expand?: object | string | null, fields?: object | Array<string> | string | null, sortfields?: object | Array<string> | string | null, page?: number, perPage?: number, RemoveDuplicates?, format?, titles?): Promise<Rows<T>>;
 
 /**
  * Получить все записи по запросу [постранично]
@@ -29,7 +29,25 @@ export function get(table: string, where?: object | string | null, expand?: obje
  * @param {object} params 
  * @returns 
  */
-export function all(table: string, params?: {where?: object, fields?: object|Array<string>, sort?: Array<string>, page?: number, perPage?: number}): object;
+export function all<T>(table: string, params?: { where?: object, fields?: object | Array<string>, sort?: Array<string>, page?: number, perPage?: number }): Promise<Rows<T>>;
+
+/**
+ * Стандартный ответ от Request с несколькими строками
+ */
+type Rows<T> = {
+  type: string,
+  status: Number,
+  ok: boolean,
+  data?: Array<T>,
+  errors: Object|undefined,
+  message: string|undefined,
+  pages: {
+    page: integer,
+    perPage: integer,
+    count: Number,
+    total: Number,
+  }
+}
 
 /**
    * Получить одну запись по ID или по условию выборки [первая запись]
@@ -38,14 +56,14 @@ export function all(table: string, params?: {where?: object, fields?: object|Arr
    * @param {object|Array} fields 
    * @param {string} primaryKeyName если указан ID, то указать название первичного ключа, если от id он отличается
  */
-export function one(table: string, IDOrWhere: number|string|object, fields?: object|Array<string>|null, primaryKeyName?: string): object|null;
+export function one<T>(table: string, IDOrWhere: number | string | object, fields?: object | Array<string> | null, primaryKeyName?: string): Promise<T | null>;
 
 /**
  * Создать новую запись
  * @param table
  * @param values
  */
-export function create(table: string, values: object)
+export function create<T>(table: string, values: object): Promise<T>
 
 /**
  * Удалить запись
