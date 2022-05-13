@@ -63,7 +63,7 @@ export function one<T>(table: string, IDOrWhere: number | string | object, field
  * @param table
  * @param values
  */
-export function create<T>(table: string, values: object): Promise<T>
+export function create<T>(table: string, values: object): Promise<SavedObject<T>>
 
 /**
  * Удалить запись
@@ -79,7 +79,20 @@ export function remove(table: string, id: number | string, byFields?: object): P
  * @param ID
  * @param values
  */
-export function edit<T>(table: string, ID: number | string, values: object): Promise<T>
+export function edit<T>(table: string, ID: number | string, values: object): Promise<SavedObject<T>>
+
+
+/**
+ * Стандартный ответ от Request с изменённой строкой
+ */
+type SavedObject<T> = {
+  type: string,
+  status: Number,
+  ok: boolean,
+  data?: T,
+  errors: Object | undefined,
+  message: string | undefined,
+}
 
 /**
  * Получить схемы всех таблиц
