@@ -113,7 +113,7 @@ type Authorized = {
     name: string,
     role: string
   };
-  errors: object|undefined;
+  errors: { [key: string]: any };
 }
 
 /**
