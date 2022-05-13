@@ -354,17 +354,24 @@ class FLAMEREST {
   }
 
   /**
-   * Получить одну запись по ID
+   * Получить одну запись по ID или по условию выборки [первая запись]
    * @param {string} table 
-   * @param {number|string} id 
+   * @param {number|string|object} IDOrWhere 
    * @param {object|Array} fields 
    * @param {string} primaryKeyName 
    * @returns {object}
    */
-  async one(table, id, fields = null, primaryKeyName = 'id') {
-    let resp = await this.get(table, {[primaryKeyName]:id}, null, fields, null, 1, 1);
+  async one(table, IDOrWhere, fields = null, primaryKeyName = 'id') {
+    
+    let where = {};
+    if(typeof IDOrWhere === 'string' || typeof IDOrWhere === 'number') where = {[primaryKeyName]:id};
+    else if(typeof IDOrWhere === 'object') where = IDOrWhere;
+    else throw "Нужно передавать ID или объект";
+
+    let resp = await this.get(table, where , null, fields, null, 1, 1);
     if(resp.errors) return resp;
     if(resp.data.length === 0) return resp;
+
     return resp.data[0];
   }
 

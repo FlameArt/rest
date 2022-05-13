@@ -32,13 +32,13 @@ export function get(table: string, where: object | string | null, expand: object
 export function all(table: string, params: {where: object, fields: object|Array<string>, sort: Array<string>, page: number, perPage: number}): object;
 
 /**
- * Получить одну запись по её ID
- * @param table 
- * @param id 
- * @param fields 
- * @param primaryKeyName 
+   * Получить одну запись по ID или по условию выборки [первая запись]
+   * @param {string} table 
+   * @param {number|string|object} IDOrWhere 
+   * @param {object|Array} fields 
+   * @param {string} primaryKeyName если указан ID, то указать название первичного ключа, если от id он отличается
  */
-export function one(table: string, id: number|string, fields: object|Array<string>, primaryKeyName: string): object;
+export function one(table: string, IDOrWhere: number|string|object, fields: object|Array<string>, primaryKeyName: string): object;
 
 /**
  * Создать новую запись
