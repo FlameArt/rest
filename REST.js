@@ -398,7 +398,7 @@ class FLAMEREST {
    * @param id
    * @param byFields
    */
-  remove(table, id = 0, byFields = null) {
+  async remove(table, id = 0, byFields = null) {
 
     // Нормализуем имена таблиц
     table = table.replace(/_/g, "");
@@ -406,7 +406,11 @@ class FLAMEREST {
     let params = {};
     if(byFields instanceof Object) params = byFields;
     
-    return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/delete?id=' + id, JSON.stringify(params), 'DELETE');
+    let resp = await this.request(this.SERVER + '/api/' + this.version + '/' + table + '/delete?id=' + id, JSON.stringify(params), 'DELETE');
+
+    if(resp.status === 204) return true;
+
+    return resp;
 
   }
 

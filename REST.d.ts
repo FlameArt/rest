@@ -71,7 +71,7 @@ export function create<T>(table: string, values: object): Promise<T>
  * @param id
  * @param byFields Если указан, удаляет по этим параметрам
  */
-export function remove(table: string, id: number | string, byFields?: object)
+export function remove(table: string, id: number | string, byFields?: object): Promise<boolean|Array<any>>
 
 /**
  * Редактировать значения
@@ -79,7 +79,7 @@ export function remove(table: string, id: number | string, byFields?: object)
  * @param ID
  * @param values
  */
-export function edit(table: string, ID: number | string, values: object)
+export function edit<T>(table: string, ID: number | string, values: object): Promise<T>
 
 /**
  * Получить схемы всех таблиц
