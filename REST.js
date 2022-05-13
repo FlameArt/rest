@@ -359,7 +359,7 @@ class FLAMEREST {
    * @param {number|string|object} IDOrWhere 
    * @param {object|Array} fields 
    * @param {string} primaryKeyName 
-   * @returns {object}
+   * @returns {object|null}
    */
   async one(table, IDOrWhere, fields = null, primaryKeyName = 'id') {
     

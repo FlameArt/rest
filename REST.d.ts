@@ -5,7 +5,7 @@
  * @param {string} type Тип
  * @param {string} responseType Тип ответа: json или blob
  */
-export function request(url: string, params: object | string, type: string, responseType: string): object
+export function request(url: string, params: object | string, type?: string, responseType?: string): object
 
 /**
  * Получить выборку из таблицы через REST
@@ -21,7 +21,7 @@ export function request(url: string, params: object | string, type: string, resp
  * @param titles Это чтобы мы могли контроллить какие названия полей мы будет загружать при экспорте, чтобы они были как в таблице
  * @return Promise<object>
  */
-export function get(table: string, where: object | string | null, expand: object | string | null, fields: object | Array<string> | string | null, sortfields: object | Array<string> | string | null, page: number, perPage: number, RemoveDuplicates, format, titles): object
+export function get(table: string, where?: object | string | null, expand?: object | string | null, fields?: object | Array<string> | string | null, sortfields?: object | Array<string> | string | null, page?: number, perPage?: number, RemoveDuplicates?, format?, titles?): object
 
 /**
  * Получить все записи по запросу [постранично]
@@ -29,7 +29,7 @@ export function get(table: string, where: object | string | null, expand: object
  * @param {object} params 
  * @returns 
  */
-export function all(table: string, params: {where: object, fields: object|Array<string>, sort: Array<string>, page: number, perPage: number}): object;
+export function all(table: string, params?: {where?: object, fields?: object|Array<string>, sort?: Array<string>, page?: number, perPage?: number}): object;
 
 /**
    * Получить одну запись по ID или по условию выборки [первая запись]
@@ -38,7 +38,7 @@ export function all(table: string, params: {where: object, fields: object|Array<
    * @param {object|Array} fields 
    * @param {string} primaryKeyName если указан ID, то указать название первичного ключа, если от id он отличается
  */
-export function one(table: string, IDOrWhere: number|string|object, fields: object|Array<string>, primaryKeyName: string): object;
+export function one(table: string, IDOrWhere: number|string|object, fields?: object|Array<string>|null, primaryKeyName?: string): object|null;
 
 /**
  * Создать новую запись
@@ -53,7 +53,7 @@ export function create(table: string, values: object)
  * @param id
  * @param byFields Если указан, удаляет по этим параметрам
  */
-export function remove(table: string, id: number | string, byFields: object)
+export function remove(table: string, id: number | string, byFields?: object)
 
 /**
  * Редактировать значения
