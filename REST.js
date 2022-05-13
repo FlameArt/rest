@@ -370,7 +370,7 @@ class FLAMEREST {
 
     let resp = await this.get(table, where , null, fields, null, 1, 1);
     if(resp.errors) return resp;
-    if(resp.data.length === 0) return resp;
+    if(resp.data.length === 0) return null;
 
     return resp.data[0];
   }
