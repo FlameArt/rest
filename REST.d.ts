@@ -91,14 +91,14 @@ export function getCRUDInfo(): object
  * @param username 
  * @param password 
  */
-export function auth(username?: string, password?: string): Authorized;
+export function auth(username?: string, password?: string): Promise<Authorized>;
 
 /**
  * Зарегистрироваться с этим логином и паролем
  * @param username 
  * @param password 
  */
-export function signup(username: string, password: string): Authorized;
+export function signup(username: string, password: string): Promise<Authorized>;
 
 /**
  * Результат авторизации
