@@ -1,6 +1,6 @@
 {
   "name": "flamerest",
-  "version": "1.0.32",
+  "version": "1.0.33",
   "description": "",
   "main": "REST.js",
   "typings": "./REST.d.ts",
@@ -14,7 +14,8 @@
   "keywords": [
     "rest",
     "yii2",
-    "js"
+    "js",
+    "ts"
   ],
   "author": "FlameArt",
   "license": "MIT",

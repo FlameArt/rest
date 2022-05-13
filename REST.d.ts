@@ -42,8 +42,8 @@ type Rows<T> = {
   errors: Object|undefined,
   message: string|undefined,
   pages: {
-    page: integer,
-    perPage: integer,
+    page: Number,
+    perPage: Number,
     count: Number,
     total: Number,
   }
@@ -91,14 +91,30 @@ export function getCRUDInfo(): object
  * @param username 
  * @param password 
  */
-export function auth(username: string, password: string);
+export function auth(username: string, password: string): Authorized;
 
 /**
  * Зарегистрироваться с этим логином и паролем
  * @param username 
  * @param password 
  */
-export function signup(username: string, password: string);
+export function signup(username: string, password: string): Authorized;
+
+/**
+ * Результат авторизации
+ */
+type Authorized = {
+  isAuthorized: boolean;
+  User: {
+    avatar: string,
+    country: string,
+    id: Number,
+    lang: string,
+    name: string,
+    role: string
+  };
+  errors: object|undefined;
+}
 
 /**
  * Выйти из системы
