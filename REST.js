@@ -443,12 +443,26 @@ class FLAMEREST {
       return new Promise((resolve, reject) => { resolve(JSON.parse(window.sessionStorage.getItem("crudschema"))) });
   }
 
-  auth(username, password) {
-    return this.request(this.SERVER + '/auth/auth', JSON.stringify({ login: username, password: password }), 'POST');
+  async auth(username, password) {
+
+    let resp = await this.request(this.SERVER + '/auth/auth', JSON.stringify({ login: username, password: password }), 'POST');
+    
+    if(resp.errors) return resp;
+    if(resp.data.length === 0) {resp.errors = []; return resp;}
+
+    return resp.data;
+
   }
 
-  signup(username, password) {
-    return this.request(this.SERVER + '/auth/signup', JSON.stringify({ login: username, password: password }), 'POST');
+  async signup(username, password) {
+
+    let resp = await this.request(this.SERVER + '/auth/signup', JSON.stringify({ login: username, password: password }), 'POST');
+    
+    if(resp.errors) return resp;
+    if(resp.data.length === 0) {resp.errors = []; return resp;}
+
+    return resp.data;
+
   }
 
   logout() {
