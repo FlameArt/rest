@@ -136,7 +136,8 @@ export function logout(): object;
 
 /**
  * Подготовить объект под загрузку: загрузить данные из элементов [type=file]
+ * Работает ссылочно, меняя основной массив
  * @param values 
  */
-export function prepare(values: object): object;
+export function prepare(values: any): Promise<any>;
 
