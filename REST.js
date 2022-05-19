@@ -482,7 +482,19 @@ class FLAMEREST {
 
     // Если в один из параметров передан FileList или input[type=file], т.е. нужно загрузить файлы
     for (let val in values) {
+      
       // Преобразуем
+      if (typeof values[val] === 'object' 
+        && values[val].hasOwnProperty('value') 
+        && (
+          values[val].value instanceof Event || 
+          values[val].value instanceof HTMLInputElement || 
+          values[val].value instanceof ClipboardEvent || 
+          values[val].value instanceof DataTransfer || 
+          values[val].value instanceof FileList
+          )
+      ) values[val] = values[val].value;
+
       if (values[val] instanceof Event && values[val].target instanceof HTMLInputElement && values[val].target.type === 'file') values[val] = values[val].target.files;
       if (values[val] instanceof HTMLInputElement && values[val].type === 'file') values[val] = values[val].files;
       if (values[val] instanceof ClipboardEvent) values[val] = values[val].clipboardData.files;
