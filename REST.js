@@ -484,31 +484,36 @@ class FLAMEREST {
     for (let val in values) {
       
       // Преобразуем
-      if (typeof values[val] === 'object' 
-        && values[val].hasOwnProperty('value') 
+      let value = values[val];
+      let isRef = false;
+      if (value instanceof Object 
+        && value.hasOwnProperty('_value') 
         && (
-          values[val].value instanceof Event || 
-          values[val].value instanceof HTMLInputElement || 
-          values[val].value instanceof ClipboardEvent || 
-          values[val].value instanceof DataTransfer || 
-          values[val].value instanceof FileList
+          value._value instanceof Event || 
+          value._value instanceof HTMLInputElement || 
+          value._value instanceof ClipboardEvent || 
+          value._value instanceof DataTransfer || 
+          value._value instanceof FileList
           )
-      ) values[val] = values[val].value;
+      ) {value = value.value; isRef = true}
 
-      if (values[val] instanceof Event && values[val].target instanceof HTMLInputElement && values[val].target.type === 'file') values[val] = values[val].target.files;
-      if (values[val] instanceof HTMLInputElement && values[val].type === 'file') values[val] = values[val].files;
-      if (values[val] instanceof ClipboardEvent) values[val] = values[val].clipboardData.files;
-      if (values[val] instanceof DataTransfer) values[val] = values[val].files;
-      if (values[val] instanceof FileList) {
+      if (value instanceof Event && value.target instanceof HTMLInputElement && value.target.type === 'file') value = value.target.files;
+      if (value instanceof HTMLInputElement && value.type === 'file') value = value.files;
+      if (value instanceof ClipboardEvent) value = value.clipboardData.files;
+      if (value instanceof DataTransfer) value = value.files;
+      if (value instanceof FileList) {
         let newValues = [];
-        values[val] = Array.from(values[val]);
-        for (let file in values[val]) {
+        value = Array.from(value);
+        for (let file in value) {
           newValues.push({
-            'name': values[val][file].name,
-            'data': await this.readFileAsync(values[val][file])
+            'name': value[file].name,
+            'data': await this.readFileAsync(value[file])
           });
         }
-        values[val] = newValues;
+        if (isRef)
+          values[val].value = newValues;
+        else
+          values[val] = newValues;
       }
     }
 
