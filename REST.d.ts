@@ -29,7 +29,7 @@ export function get<T>(table: string, where?: object | string | null, expand?: o
  * @param {object} params 
  * @returns 
  */
-export function all<T>(table: string, params?: { where?: object, fields?: object | Array<string>, sort?: Array<string>, page?: number, perPage?: number }): Promise<Rows<T>>;
+export function all<T>(table: string, params?: { where?: object, fields?: object | Array<string>, sort?: Array<string>, page?: number, perPage?: number, tree?: number }): Promise<Rows<T>>;
 
 /**
  * Стандартный ответ от Request с несколькими строками
