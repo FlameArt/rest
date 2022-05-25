@@ -295,9 +295,10 @@ class FLAMEREST {
    * @param RemoveDuplicates
    * @param format
    * @param titles Это чтобы мы могли контроллить какие названия полей мы будет загружать при экспорте, чтобы они были как в таблице
+   * @param tree дерево
    * @return Promise<>
    */
-  get(table, where, expand, fields, sortfields, page, perPage, RemoveDuplicates, format, titles) {
+  get(table, where, expand, fields, sortfields, page, perPage, RemoveDuplicates, format, titles, tree) {
 
     // Нормализуем имена таблиц
     table = table.replace(/_/g, "");
@@ -312,6 +313,10 @@ class FLAMEREST {
     // Генерим условия
     if (where !== undefined && where !== null)
       json.where = where;
+
+    // Генерим условия
+    if (tree !== undefined && tree !== null)
+      json.tree = tree;
 
     if (fields !== undefined && fields !== null)
       json.fields = fields;
