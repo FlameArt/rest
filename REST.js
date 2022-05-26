@@ -393,10 +393,14 @@ class FLAMEREST {
     // Подготовить значения
     await this.prepare(values);
 
+    if (appendTo === undefined) appendTo = null;
+    if (insertAfter === undefined) insertAfter = null;
+    if (insertFirst === undefined) insertFirst = null;
+
     return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/create?'
-      + (appendTo ? '&appendTo=' + appendTo : '')
-      + (insertAfter ? '&insertAfter=' + insertAfter : '')
-      + (insertFirst ? '&insertFirst=' + insertFirst : '')
+      + (appendTo !== null ? '&appendTo=' + appendTo : '')
+      + (insertAfter !== null ? '&insertAfter=' + insertAfter : '')
+      + (insertFirst !== null ? '&insertFirst=' + insertFirst : '')
       , JSON.stringify(values), 'POST');
 
   }
@@ -437,10 +441,14 @@ class FLAMEREST {
     // Подготовить значения
     await this.prepare(values);
 
+    if(appendTo === undefined) appendTo = null;
+    if (insertAfter === undefined) insertAfter = null;
+    if (insertFirst === undefined) insertFirst = null;
+
     return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/update?id=' + ID
-      + (appendTo ? '&appendTo=' + appendTo : '')
-      + (insertAfter ? '&insertAfter=' + insertAfter : '')
-      + (insertFirst ? '&insertFirst=' + insertFirst : '')
+      + (appendTo!==null ? '&appendTo=' + appendTo : '')
+      + (insertAfter!==null ? '&insertAfter=' + insertAfter : '')
+      + (insertFirst!==null ? '&insertFirst=' + insertFirst : '')
       , JSON.stringify(values), 'PATCH');
   }
 
