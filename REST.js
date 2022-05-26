@@ -97,7 +97,7 @@ class FLAMEREST {
                 // Ошибка валидации: Собираем все ошибки полей
                 case 422:
                   let Errs = {};
-                  for(let err of ResolveBody.errors) {
+                  for (let err of ResolveBody.errors) {
                     Errs[err['field']] = Errs[err['field']] === undefined ? err['message'] : Errs[err['field']] + ". " + err['message']
                   }
                   ResolveBody.errors = Errs;
@@ -367,15 +367,15 @@ class FLAMEREST {
    * @returns {object|null}
    */
   async one(table, IDOrWhere, fields = null, primaryKeyName = 'id') {
-    
+
     let where = {};
-    if(typeof IDOrWhere === 'string' || typeof IDOrWhere === 'number') where = {[primaryKeyName]:id};
-    else if(typeof IDOrWhere === 'object') where = IDOrWhere;
+    if (typeof IDOrWhere === 'string' || typeof IDOrWhere === 'number') where = { [primaryKeyName]: id };
+    else if (typeof IDOrWhere === 'object') where = IDOrWhere;
     else throw "Нужно передавать ID или объект";
 
-    let resp = await this.get(table, where , null, fields, null, 1, 1);
-    if(resp.errors) return resp;
-    if(resp.data.length === 0) return null;
+    let resp = await this.get(table, where, null, fields, null, 1, 1);
+    if (resp.errors) return resp;
+    if (resp.data.length === 0) return null;
 
     return resp.data[0];
   }
@@ -385,7 +385,7 @@ class FLAMEREST {
    * @param table
    * @param values
    */
-  async create(table, values) {
+  async create(table, values, appendTo = null, insertAfter = null, insertFirst = null) {
 
     // Нормализуем имена таблиц
     table = table.replace(/_/g, "");
@@ -393,7 +393,11 @@ class FLAMEREST {
     // Подготовить значения
     await this.prepare(values);
 
-    return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/create', JSON.stringify(values), 'POST');
+    return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/create?'
+      + (appendTo ? '&appendTo=' + appendTo : '')
+      + (insertAfter ? '&insertAfter=' + insertAfter : '')
+      + (insertFirst ? '&insertFirst=' + insertFirst : '')
+      , JSON.stringify(values), 'POST');
 
   }
 
@@ -409,11 +413,11 @@ class FLAMEREST {
     table = table.replace(/_/g, "");
 
     let params = {};
-    if(byFields instanceof Object) params = byFields;
-    
+    if (byFields instanceof Object) params = byFields;
+
     let resp = await this.request(this.SERVER + '/api/' + this.version + '/' + table + '/delete?id=' + id, JSON.stringify(params), 'DELETE');
 
-    if(resp.status === 204) return true;
+    if (resp.status === 204) return true;
 
     return resp;
 
@@ -425,7 +429,7 @@ class FLAMEREST {
    * @param ID
    * @param values
    */
-  async edit(table, ID, values) {
+  async edit(table, ID, values, appendTo = null, insertAfter = null, insertFirst = null) {
 
     // Нормализуем имена таблиц
     table = table.replace(/_/g, "");
@@ -433,7 +437,11 @@ class FLAMEREST {
     // Подготовить значения
     await this.prepare(values);
 
-    return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/update?id=' + ID, JSON.stringify(values), 'PATCH');
+    return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/update?id=' + ID
+      + (appendTo ? '&appendTo=' + appendTo : '')
+      + (insertAfter ? '&insertAfter=' + insertAfter : '')
+      + (insertFirst ? '&insertFirst=' + insertFirst : '')
+      , JSON.stringify(values), 'PATCH');
   }
 
   /**
@@ -455,9 +463,9 @@ class FLAMEREST {
   async auth(username, password) {
 
     let resp = await this.request(this.SERVER + '/auth/auth', JSON.stringify({ login: username, password: password }), 'POST');
-    
-    if(resp.errors) return resp;
-    if(resp.data.length === 0) {resp.errors = []; return resp;}
+
+    if (resp.errors) return resp;
+    if (resp.data.length === 0) { resp.errors = []; return resp; }
 
     return resp.data;
 
@@ -466,9 +474,9 @@ class FLAMEREST {
   async signup(username, password) {
 
     let resp = await this.request(this.SERVER + '/auth/signup', JSON.stringify({ login: username, password: password }), 'POST');
-    
-    if(resp.errors) return resp;
-    if(resp.data.length === 0) {resp.errors = []; return resp;}
+
+    if (resp.errors) return resp;
+    if (resp.data.length === 0) { resp.errors = []; return resp; }
 
     return resp.data;
 
@@ -487,20 +495,20 @@ class FLAMEREST {
 
     // Если в один из параметров передан FileList или input[type=file], т.е. нужно загрузить файлы
     for (let val in values) {
-      
+
       // Преобразуем
       let value = values[val];
       let isRef = false;
-      if (value instanceof Object 
-        && value.hasOwnProperty('_value') 
+      if (value instanceof Object
+        && value.hasOwnProperty('_value')
         && (
-          value._value instanceof Event || 
-          value._value instanceof HTMLInputElement || 
-          value._value instanceof ClipboardEvent || 
-          value._value instanceof DataTransfer || 
+          value._value instanceof Event ||
+          value._value instanceof HTMLInputElement ||
+          value._value instanceof ClipboardEvent ||
+          value._value instanceof DataTransfer ||
           value._value instanceof FileList
-          )
-      ) {value = value.value; isRef = true}
+        )
+      ) { value = value.value; isRef = true }
 
       if (value instanceof Event && value.target instanceof HTMLInputElement && value.target.type === 'file') value = value.target.files;
       if (value instanceof HTMLInputElement && value.type === 'file') value = value.files;
@@ -534,13 +542,13 @@ class FLAMEREST {
   readFileAsync(file) {
     return new Promise((resolve, reject) => {
       let reader = new FileReader();
-  
+
       reader.onloadend = () => {
         resolve(reader.result);
       };
-  
+
       reader.onerror = reject;
-  
+
       reader.readAsDataURL(file);
     })
   }

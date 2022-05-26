@@ -39,8 +39,8 @@ type Rows<T> = {
   status: Number,
   ok: boolean,
   data?: Array<T>,
-  errors: Object|undefined,
-  message: string|undefined,
+  errors: Object | undefined,
+  message: string | undefined,
   pages: {
     page: Number,
     perPage: Number,
@@ -63,7 +63,7 @@ export function one<T>(table: string, IDOrWhere: number | string | object, field
  * @param table
  * @param values
  */
-export function create<T>(table: string, values: object): Promise<SavedObject<T>>
+export function create<T>(table: string, values: object, appendTo: number | string | null = null, insertAfter: number | string | null = null, insertFirst: number | string | null = null): Promise<SavedObject<T>>
 
 /**
  * Удалить запись
@@ -71,7 +71,7 @@ export function create<T>(table: string, values: object): Promise<SavedObject<T>
  * @param id
  * @param byFields Если указан, удаляет по этим параметрам
  */
-export function remove(table: string, id: number | string, byFields?: object): Promise<boolean|Array<any>>
+export function remove(table: string, id: number | string, byFields?: object): Promise<boolean | Array<any>>
 
 /**
  * Редактировать значения
@@ -79,7 +79,7 @@ export function remove(table: string, id: number | string, byFields?: object): P
  * @param ID
  * @param values
  */
-export function edit<T>(table: string, ID: number | string, values: object): Promise<SavedObject<T>>
+export function edit<T>(table: string, ID: number | string, values: object, appendTo: number | string | null = null, insertAfter: number | string | null = null, insertFirst: number | string | null = null): Promise<SavedObject<T>>
 
 
 /**
