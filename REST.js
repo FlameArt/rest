@@ -355,7 +355,7 @@ class FLAMEREST {
    * @returns {object}
    */
   all(table, params) {
-    return this.get(table, params.where, null, params.fields, params.sort, params.page, params.perPage, null, null, null, params.tree);
+    return this.get(table, params?.where, null, params?.fields, params?.sort, params?.page, params?.perPage, null, null, null, params?.tree);
   }
 
   /**
