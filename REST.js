@@ -369,7 +369,7 @@ class FLAMEREST {
   async one(table, IDOrWhere, fields = null, primaryKeyName = 'id') {
 
     let where = {};
-    if (typeof IDOrWhere === 'string' || typeof IDOrWhere === 'number') where = { [primaryKeyName]: id };
+    if (typeof IDOrWhere === 'string' || typeof IDOrWhere === 'number') where = { [primaryKeyName]: IDOrWhere };
     else if (typeof IDOrWhere === 'object') where = IDOrWhere;
     else throw "Нужно передавать ID или объект";
 
