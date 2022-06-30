@@ -441,14 +441,14 @@ class FLAMEREST {
     // Подготовить значения
     await this.prepare(values);
 
-    if(appendTo === undefined) appendTo = null;
+    if (appendTo === undefined) appendTo = null;
     if (insertAfter === undefined) insertAfter = null;
     if (insertFirst === undefined) insertFirst = null;
 
     return this.request(this.SERVER + '/api/' + this.version + '/' + table + '/update?id=' + ID
-      + (appendTo!==null ? '&appendTo=' + appendTo : '')
-      + (insertAfter!==null ? '&insertAfter=' + insertAfter : '')
-      + (insertFirst!==null ? '&insertFirst=' + insertFirst : '')
+      + (appendTo !== null ? '&appendTo=' + appendTo : '')
+      + (insertAfter !== null ? '&insertAfter=' + insertAfter : '')
+      + (insertFirst !== null ? '&insertFirst=' + insertFirst : '')
       , JSON.stringify(values), 'PATCH');
   }
 
@@ -559,6 +559,27 @@ class FLAMEREST {
 
       reader.readAsDataURL(file);
     })
+  }
+
+  /**
+   * Заполнить существующий объект пришедшими из БД данными
+   * сохраняя при этом оригинальные классы и функции
+   * @param {*} object 
+   * @param {*} values 
+   */
+  fillObject(object, values) {
+    for (let prop in object) {
+
+      // добавляем только те объекты, что уже созданы в сущности
+      if (!values.hasOwnProperty(prop)) continue;
+
+      // объекты проходим рекурсивно
+      if (typeof values[prop] === 'object' && typeof object[prop] === 'object') { this.fillObject(object[prop], values[prop]); continue }
+
+      // тут остались все обычные типы - записываем
+      object[prop] = values[prop];
+
+    }
   }
 
 }

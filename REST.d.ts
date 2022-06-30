@@ -141,3 +141,10 @@ export function logout(): object;
  */
 export function prepare(values: any): Promise<any>;
 
+
+/**
+ * Заполнить объект данными, пришедшими из базы, сохраняя оригинальные классы и функции
+ * @param object Заполняемый объект
+ * @param values Аналогичный объект-источник данных
+ */
+export function fillObject(object: any, values: any): void;
