@@ -574,7 +574,7 @@ class FLAMEREST {
       if (!values.hasOwnProperty(prop)) continue;
 
       // объекты проходим рекурсивно
-      if (typeof values[prop] === 'object' && typeof object[prop] === 'object') { this.fillObject(object[prop], values[prop]); continue }
+      if (typeof values[prop] === 'object' && typeof object[prop] === 'object' && values[prop] !== null && typeof object[prop] !== null) { this.fillObject(object[prop], values[prop]); continue }
 
       // тут остались все обычные типы - записываем
       object[prop] = values[prop];
