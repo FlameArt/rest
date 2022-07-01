@@ -298,7 +298,7 @@ class FLAMEREST {
    * @param tree дерево
    * @return Promise<>
    */
-  get(table, where, expand, fields, sortfields, page, perPage, RemoveDuplicates, format, titles, tree) {
+  get(table, where, extfields, fields, sortfields, page, perPage, RemoveDuplicates, format, titles, tree) {
 
     // Нормализуем имена таблиц
     table = table.replace(/_/g, "");
@@ -327,8 +327,8 @@ class FLAMEREST {
     if (sortfields !== undefined && sortfields !== null)
       json.sort = sortfields;
 
-    if (expand !== undefined && expand !== null)
-      json.expand = expand;
+    if (extfields !== undefined && extfields !== null)
+      json.extfields = extfields;
 
     if (RemoveDuplicates !== undefined && RemoveDuplicates !== null)
       json.RemoveDuplicates = true;
@@ -355,7 +355,7 @@ class FLAMEREST {
    * @returns {object}
    */
   all(table, params) {
-    return this.get(table, params?.where, null, params?.fields, params?.sort, params?.page, params?.perPage, null, null, null, params?.tree);
+    return this.get(table, params?.where, params?.extfields, params?.fields, params?.sort, params?.page, params?.perPage, null, null, null, params?.tree);
   }
 
   /**
