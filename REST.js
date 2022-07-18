@@ -366,14 +366,14 @@ class FLAMEREST {
    * @param {string} primaryKeyName 
    * @returns {object|null}
    */
-  async one(table, IDOrWhere, fields = null, primaryKeyName = 'id') {
+  async one(table, IDOrWhere, extfields = null, fields = null, primaryKeyName = 'id') {
 
     let where = {};
     if (typeof IDOrWhere === 'string' || typeof IDOrWhere === 'number') where = { [primaryKeyName]: IDOrWhere };
     else if (typeof IDOrWhere === 'object') where = IDOrWhere;
     else throw "Нужно передавать ID или объект";
 
-    let resp = await this.get(table, where, null, fields, null, 1, 1);
+    let resp = await this.get(table, where, extfields, fields, null, 1, 1);
     if (resp.errors) return resp;
     if (resp.data.length === 0) return null;
 

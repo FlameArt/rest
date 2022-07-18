@@ -21,7 +21,7 @@ export function request(url: string, params: object | string, type?: string, res
  * @param titles Это чтобы мы могли контроллить какие названия полей мы будет загружать при экспорте, чтобы они были как в таблице
  * @return Promise<object>
  */
-export function get<T>(table: string, where?: object | string | null, expand?: object | string | null, fields?: object | Array<string> | string | null, sortfields?: object | Array<string> | string | null, page?: number, perPage?: number, RemoveDuplicates?, format?, titles?): Promise<Rows<T>>;
+export function get<T>(table: string, where?: object | string | null, extfields?: object | Array<string>, fields?: object | Array<string> | string | null, sortfields?: object | Array<string> | string | null, page?: number, perPage?: number, RemoveDuplicates?, format?, titles?): Promise<Rows<T>>;
 
 /**
  * Получить все записи по запросу [постранично]
@@ -29,7 +29,7 @@ export function get<T>(table: string, where?: object | string | null, expand?: o
  * @param {object} params 
  * @returns 
  */
-export function all<T>(table: string, params?: { where?: object, fields?: object | Array<string>, sort?: Array<string>, page?: number, perPage?: number, tree?: number }): Promise<Rows<T>>;
+export function all<T>(table: string, params?: { where?: object, extfields?: object | Array<string>, fields?: object | Array<string>, sort?: Array<string>, page?: number, perPage?: number, tree?: number }): Promise<Rows<T>>;
 
 /**
  * Стандартный ответ от Request с несколькими строками
@@ -56,7 +56,7 @@ type Rows<T> = {
    * @param {object|Array} fields 
    * @param {string} primaryKeyName если указан ID, то указать название первичного ключа, если от id он отличается
  */
-export function one<T>(table: string, IDOrWhere: number | string | object, fields?: object | Array<string> | null, primaryKeyName?: string): Promise<T | null>;
+export function one<T>(table: string, IDOrWhere: number | string | object, extfields?: object | Array<string>, fields?: object | Array<string> | null, primaryKeyName?: string): Promise<T | null>;
 
 /**
  * Создать новую запись
