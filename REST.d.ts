@@ -36,16 +36,16 @@ export function all<T>(table: string, params?: { where?: object, extfields?: obj
  */
 type Rows<T> = {
   type: string,
-  status: Number,
+  status: number,
   ok: boolean,
   data?: Array<T>,
-  errors: Object | undefined,
+  errors: object | undefined,
   message: string | undefined,
   pages: {
-    page: Number,
-    perPage: Number,
-    count: Number,
-    total: Number,
+    page: number,
+    perPage: number,
+    count: number,
+    total: number,
   }
 }
 
@@ -121,7 +121,7 @@ type Authorized = {
   User: {
     avatar: string,
     country: string,
-    id: Number,
+    id: number,
     lang: string,
     name: string,
     role: string
