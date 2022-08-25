@@ -63,7 +63,7 @@ export function one<T>(table: string, IDOrWhere: number | string | object, extfi
  * @param table
  * @param values
  */
-export function create<T>(table: string, values: object, appendTo: number | string | null = null, insertAfter: number | string | null = null, insertFirst: number | string | null = null): Promise<SavedObject<T>>
+export function create<T>(table: string, values: object, appendTo: number | string | null, insertAfter: number | string | null, insertFirst: number | string | null): Promise<SavedObject<T>>
 
 /**
  * Удалить запись
@@ -79,7 +79,7 @@ export function remove(table: string, id: number | string, byFields?: object): P
  * @param ID
  * @param values
  */
-export function edit<T>(table: string, ID: number | string, values: object, appendTo: number | string | null = null, insertAfter: number | string | null = null, insertFirst: number | string | null = null): Promise<SavedObject<T>>
+export function edit<T>(table: string, ID: number | string, values: object, appendTo: number | string | null, insertAfter: number | string | null, insertFirst: number | string | null): Promise<SavedObject<T>>
 
 
 /**
