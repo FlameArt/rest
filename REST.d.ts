@@ -132,7 +132,7 @@ type Authorized = {
 /**
  * Выйти из системы
  */
-export function logout(): object;
+export function logout(): Promise<object>;
 
 /**
  * Подготовить объект под загрузку: загрузить данные из элементов [type=file]
