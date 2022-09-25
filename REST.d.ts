@@ -113,7 +113,7 @@ export function auth(username?: string, password?: string): Promise<Authorized>;
  * @param password 
  * @param name 
  */
-export function signup(email: string, username: string, password: string, name: string): Promise<Authorized>;
+export function signup(email: string | null, username: string | null, password: string, name: string | null): Promise<Authorized>;
 
 /**
  * Результат авторизации
