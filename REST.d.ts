@@ -111,7 +111,7 @@ export function auth(username?: string, password?: string): Promise<Authorized>;
  * @param username 
  * @param password 
  */
-export function signup(username: string, password: string): Promise<Authorized>;
+export function signup(email: string, username: string, password: string): Promise<Authorized>;
 
 /**
  * Результат авторизации
