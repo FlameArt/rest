@@ -108,10 +108,12 @@ export function auth(username?: string, password?: string): Promise<Authorized>;
 
 /**
  * Зарегистрироваться с этим логином и паролем
+ * @param email 
  * @param username 
  * @param password 
+ * @param name 
  */
-export function signup(email: string, username: string, password: string): Promise<Authorized>;
+export function signup(email: string, username: string, password: string, name: string): Promise<Authorized>;
 
 /**
  * Результат авторизации
