@@ -149,4 +149,4 @@ export function prepare(values: any): Promise<any>;
  * @param object Заполняемый объект
  * @param values Аналогичный объект-источник данных
  */
-export function fillObject(object: any, values: any): void;
+export function fillObject<T>(object: T, values: any): T;

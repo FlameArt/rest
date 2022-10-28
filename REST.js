@@ -580,6 +580,7 @@ class FLAMEREST {
       object[prop] = values[prop];
 
     }
+    return object;
   }
 
 }
