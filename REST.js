@@ -553,13 +553,12 @@ class FLAMEREST {
             */
 
           if (values[val] instanceof Array) {
-            values[val].splice(valueKey);
+            values[val].splice(valueKey, 1);
             values[val].push(...newValues);
           }
           else {
             values[val] = newValues;
           }
-
 
         }
       }
