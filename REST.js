@@ -504,38 +504,63 @@ class FLAMEREST {
     // Если в один из параметров передан FileList или input[type=file], т.е. нужно загрузить файлы
     for (let val in values) {
 
-      // Преобразуем
-      let value = values[val];
-      let isRef = false;
-      if (value instanceof Object
-        && value.hasOwnProperty('_value')
-        && (
-          value._value instanceof Event ||
-          value._value instanceof HTMLInputElement ||
-          value._value instanceof ClipboardEvent ||
-          value._value instanceof DataTransfer ||
-          value._value instanceof FileList
-        )
-      ) { value = value.value; isRef = true }
+      // Пустые значения нам не нужны
+      if (values[val] === undefined || values[val] === null) continue;
 
-      if (value instanceof Event && value.target instanceof HTMLInputElement && value.target.type === 'file') value = value.target.files;
-      if (value instanceof HTMLInputElement && value.type === 'file') value = value.files;
-      if (value instanceof ClipboardEvent) value = value.clipboardData.files;
-      if (value instanceof DataTransfer) value = value.files;
-      if (value instanceof FileList) {
-        let newValues = [];
-        value = Array.from(value);
-        for (let file in value) {
-          newValues.push({
-            'name': value[file].name,
-            'data': await this.readFileAsync(value[file]),
-            'id': this.generateID(32)
-          });
+      // Любой вариант захода делаем массивом
+      let valuesArr = [];
+      if (values[val] instanceof Array) valuesArr = values[val];
+      else valuesArr = [values[val]];
+
+      // Идём по каждому значению в массиве
+      for (let value of valuesArr) {
+
+
+        // Преобразуем
+        let isRef = false;
+        if (value instanceof Object
+          && value.hasOwnProperty('_value')
+          && (
+            value._value instanceof Event ||
+            value._value instanceof HTMLInputElement ||
+            value._value instanceof ClipboardEvent ||
+            value._value instanceof DataTransfer ||
+            value._value instanceof FileList
+          )
+        ) { value = value.value; isRef = true }
+
+        if (value instanceof Event && value.target instanceof HTMLInputElement && value.target.type === 'file') value = value.target.files;
+        if (value instanceof HTMLInputElement && value.type === 'file') value = value.files;
+        if (value instanceof ClipboardEvent) value = value.clipboardData.files;
+        if (value instanceof DataTransfer) value = value.files;
+        if (value instanceof FileList) {
+          let newValues = [];
+          value = Array.from(value);
+          for (let file in value) {
+            newValues.push({
+              'name': value[file].name,
+              'data': await this.readFileAsync(value[file]),
+              'id': this.generateID(32)
+            });
+          }
+
+          /*
+          if (isRef)
+            values[val].value = newValues;
+          else
+            values[val] = newValues;
+            */
+
+          if (values[val] instanceof Array) {
+            values[val].splice(val);
+            values[val].push(...newValues);
+          }
+          else {
+            values[val] = newValues;
+          }
+
+
         }
-        if (isRef)
-          values[val].value = newValues;
-        else
-          values[val] = newValues;
       }
     }
 
