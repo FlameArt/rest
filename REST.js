@@ -513,8 +513,9 @@ class FLAMEREST {
       else valuesArr = [values[val]];
 
       // Идём по каждому значению в массиве
-      for (let value of valuesArr) {
+      for (let valueKey in valuesArr) {
 
+        const value = valuesArr[valueKey];
 
         // Преобразуем
         let isRef = false;
