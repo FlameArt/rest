@@ -30,6 +30,12 @@ class FLAMEREST {
      */
     this.version = version ? version : 'v1';
 
+    /**
+     * Если авторизация по токену, то он сюда подставляется
+     */
+    this.isAuthByJWTQuery = true;
+    this.token = null;
+
   }
 
   install(Vue, options) {
@@ -44,7 +50,7 @@ class FLAMEREST {
    * @param {string} type Тип
    * @param {string} responseType Тип ответа: json или blob
    */
-  request(url, params, type = 'GET', responseType = 'json') {
+  request(url, params, type = 'GET', responseType = 'json', isNeedToken = true) {
 
     // Нормализуем параметры, если они есть
     if (typeof params === "object") {
@@ -59,6 +65,11 @@ class FLAMEREST {
       return new Promise(async (resolve, reject) => {
 
         try {
+
+          // Авторизация
+          if (this.isAuthByJWTQuery && isNeedToken === true) {
+            url = url + "?access-token=" + this.token;
+          }
 
           // Тело запроса
           let requestBody = {
@@ -468,9 +479,9 @@ class FLAMEREST {
       return new Promise((resolve, reject) => { resolve(JSON.parse(window.sessionStorage.getItem("crudschema"))) });
   }
 
-  async auth(username, password) {
+  async auth(username, password, isNeedToken) {
 
-    let resp = await this.request(this.SERVER + '/auth/auth', JSON.stringify({ login: username, password: password }), 'POST');
+    let resp = await this.request(this.SERVER + '/auth/auth', JSON.stringify({ login: username, password: password }), 'POST', 'json', isNeedToken);
 
     if (resp.errors) return resp;
     if (resp.data.length === 0) { resp.errors = []; return resp; }
@@ -481,7 +492,7 @@ class FLAMEREST {
 
   async signup(email, username, password, name) {
 
-    let resp = await this.request(this.SERVER + '/auth/signup', JSON.stringify({ login: username, email: email, password: password, name: name }), 'POST');
+    let resp = await this.request(this.SERVER + '/auth/signup', JSON.stringify({ login: username, email: email, password: password, name: name }), 'POST', 'json', false);
 
     if (resp.errors) return resp;
     if (resp.data.length === 0) { resp.errors = []; return resp; }
