@@ -482,7 +482,7 @@ class FLAMEREST {
   async auth(username, password, isNeedToken) {
 
     let resp = null;
-    if (this.token !== null && (username === null || username === undefined)) {
+    if (this.token !== null && this.token !== 'undefined' && (username === null || username === undefined)) {
       resp = await this.request(this.SERVER + '/auth/auth', JSON.stringify({}), 'POST', 'json', true);
     }
     else {
