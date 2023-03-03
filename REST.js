@@ -67,7 +67,7 @@ class FLAMEREST {
         try {
 
           // Авторизация
-          if (this.isAuthByJWTQuery && isNeedToken === true) {
+          if (this.isAuthByJWTQuery && isNeedToken === true && this.token !== null) {
             url = url + "?access-token=" + this.token;
           }
 
@@ -481,10 +481,19 @@ class FLAMEREST {
 
   async auth(username, password, isNeedToken) {
 
-    let resp = await this.request(this.SERVER + '/auth/auth', JSON.stringify({ login: username, password: password }), 'POST', 'json', isNeedToken);
+    let resp = null;
+    if (this.token !== null && (username === null || username === undefined)) {
+      resp = await this.request(this.SERVER + '/auth/auth', JSON.stringify({}), 'POST', 'json', true);
+    }
+    else {
+      resp = await this.request(this.SERVER + '/auth/auth', JSON.stringify({ login: username, password: password }), 'POST', 'json', false);
+    }
 
     if (resp.errors) return resp;
     if (resp.data.length === 0) { resp.errors = []; return resp; }
+
+    // после успешной авторизации устанавливаем токен
+    if (typeof resp.token === 'string') this.token = resp.token;
 
     return resp.data;
 

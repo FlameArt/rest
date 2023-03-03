@@ -129,6 +129,7 @@ type Authorized = {
     role: string
   };
   errors: { [key: string]: any };
+  token: string;
 }
 
 /**
