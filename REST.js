@@ -68,7 +68,7 @@ class FLAMEREST {
 
           // Авторизация
           if (this.isAuthByJWTQuery && isNeedToken === true && this.token !== null && this.token !== undefined && this.token !== 'undefined') {
-            url = url + "?access-token=" + this.token;
+            url = url + (url.indexOf("?") === -1 ? "?" : "&") + "access-token=" + this.token;
           }
 
           // Тело запроса
