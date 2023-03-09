@@ -1,4 +1,38 @@
 export default REST = {
+
+  /**
+  * Адрес серва
+  * @type {string}
+  */
+  SERVER: string,
+
+  /**
+   * Версия api
+   */
+  version: string,
+
+
+  /**
+   * Если авторизация по токену
+   */
+  isAuthByJWTQuery: boolean,
+
+  /**
+   * Токен авторизации
+   */
+  token: string | null,
+
+  /**
+   * Будет вызван, если любой из запросов вернут требование авторизоваться
+   */
+  unauthorized_callback: function () { },
+
+  /**
+   * Стандартное число запросов на страницу
+   * @type {number}
+   */
+  perPageDefault: number,
+
   /**
    *
    * @param {string} url Адрес
