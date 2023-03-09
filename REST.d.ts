@@ -1,16 +1,14 @@
-export default REST = {
+interface IREST {
 
   /**
-  * Адрес серва
-  * @type {string}
-  */
+   * Сервер, endpoint
+   */
   SERVER: string,
 
   /**
    * Версия api
    */
   version: string,
-
 
   /**
    * Если авторизация по токену
@@ -25,7 +23,7 @@ export default REST = {
   /**
    * Будет вызван, если любой из запросов вернут требование авторизоваться
    */
-  unauthorized_callback: function () { },
+  unauthorized_callback: () => {},
 
   /**
    * Стандартное число запросов на страницу
@@ -40,7 +38,7 @@ export default REST = {
    * @param {string} type Тип
    * @param {string} responseType Тип ответа: json или blob
    */
-  request(url: string, params: object | string, type?: string, responseType?: string): object { },
+  request(url: string, params: object | string, type?: string, responseType?: string): object,
 
   /**
    * Получить выборку из таблицы через REST
@@ -56,7 +54,7 @@ export default REST = {
    * @param titles Это чтобы мы могли контроллить какие названия полей мы будет загружать при экспорте, чтобы они были как в таблице
    * @return Promise<object>
    */
-  get<T>(table: string, where?: object | string | null, extfields?: object | Array<string>, fields?: object | Array<string> | string | null, sortfields?: object | Array<string> | string | null, page?: number, perPage?: number, RemoveDuplicates?, format?, titles?): Promise<Rows<T>> { },
+  get<T>(table: string, where?: object | string | null, extfields?: object | Array<string>, fields?: object | Array<string> | string | null, sortfields?: object | Array<string> | string | null, page?: number, perPage?: number, RemoveDuplicates?, format?, titles?): Promise<Rows<T>>,
 
   /**
    * Получить все записи по запросу [постранично]
@@ -64,7 +62,7 @@ export default REST = {
    * @param {object} params 
    * @returns 
    */
-  all<T>(table: string, params?: { where?: object, extfields?: object | Array<string>, fields?: object | Array<string>, sort?: Array<string>, page?: number, perPage?: number, tree?: number }): Promise<Rows<T>> { },
+  all<T>(table: string, params?: { where?: object, extfields?: object | Array<string>, fields?: object | Array<string>, sort?: Array<string>, page?: number, perPage?: number, tree?: number }): Promise<Rows<T>>,
 
   /**
      * Получить одну запись по ID или по условию выборки [первая запись]
@@ -73,14 +71,14 @@ export default REST = {
      * @param {object|Array} fields 
      * @param {string} primaryKeyName если указан ID, то указать название первичного ключа, если от id он отличается
    */
-  one<T>(table: string, IDOrWhere: number | string | object, extfields?: object | Array<string>, fields?: object | Array<string> | null, primaryKeyName?: string): Promise<T | null> { },
+  one<T>(table: string, IDOrWhere: number | string | object, extfields?: object | Array<string>, fields?: object | Array<string> | null, primaryKeyName?: string): Promise<T | null>,
 
   /**
    * Создать новую запись
    * @param table
    * @param values
    */
-  create<T>(table: string, values: object, appendTo?: number | string | null, insertAfter?: number | string | null, insertFirst?: number | string | null): Promise<SavedObject<T>> { },
+  create<T>(table: string, values: object, appendTo?: number | string | null, insertAfter?: number | string | null, insertFirst?: number | string | null): Promise<SavedObject<T>>,
 
   /**
    * Удалить запись
@@ -88,7 +86,7 @@ export default REST = {
    * @param id
    * @param byFields Если указан, удаляет по этим параметрам
    */
-  remove(table: string, id: number | string, byFields?: object): Promise<boolean | Array<any>> { },
+  remove(table: string, id: number | string, byFields?: object): Promise<boolean | Array<any>>,
 
   /**
    * Редактировать значения
@@ -96,20 +94,20 @@ export default REST = {
    * @param ID
    * @param values
    */
-  edit<T>(table: string, ID: number | string, values: object, appendTo: number | string | null, insertAfter: number | string | null, insertFirst: number | string | null): Promise<SavedObject<T>> { },
+  edit<T>(table: string, ID: number | string, values: object, appendTo: number | string | null, insertAfter: number | string | null, insertFirst: number | string | null): Promise<SavedObject<T>>,
 
 
   /**
    * Получить схемы всех таблиц
    */
-  getCRUDInfo(): object { },
+  getCRUDInfo(): object,
 
   /**
    * Авторизоваться
    * @param username 
    * @param password 
    */
-  auth(username?: string, password?: string): Promise<Authorized> { },
+  auth(username?: string, password?: string): Promise<Authorized>,
 
   /**
    * Зарегистрироваться с этим логином и паролем
@@ -118,20 +116,20 @@ export default REST = {
    * @param password 
    * @param name 
    */
-  signup(email: string | null, username: string | null, password: string, name: string | null): Promise<Authorized> { },
+  signup(email: string | null, username: string | null, password: string, name: string | null): Promise<Authorized>,
 
 
   /**
    * Выйти из системы
    */
-  logout(): Promise<object> { },
+  logout(): Promise<object>,
 
   /**
    * Подготовить объект под загрузку: загрузить данные из элементов [type=file]
    * Работает ссылочно, меняя основной массив
    * @param values 
    */
-  prepare(values: any): Promise<any> { },
+  prepare(values: any): Promise<any>,
 
 
   /**
@@ -139,7 +137,7 @@ export default REST = {
    * @param object Заполняемый объект
    * @param values Аналогичный объект-источник данных
    */
-  fillObject<T>(object: T, values: any): T { },
+  fillObject<T>(object: T, values: any): T,
 
 }
 
@@ -190,3 +188,7 @@ export type Authorized = {
   errors: { [key: string]: any };
   token: string;
 }
+
+declare const REST: IREST;
+
+export default REST;
