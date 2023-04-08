@@ -26,6 +26,11 @@ class FLAMEREST {
     this.unauthorized_callback = unauthorized_callback;
 
     /**
+     * Токен приложения конкретного клиента для отправки пуш уведомлений именно ему
+     */
+    this.pushNotificationToken = null;
+
+    /**
      * Версия api
      */
     this.version = version ? version : 'v1';
@@ -501,7 +506,7 @@ class FLAMEREST {
 
   async signup(email, username, password, name, pushNotificationToken) {
 
-    let resp = await this.request(this.SERVER + '/auth/signup', JSON.stringify({ login: username, email: email, password: password, name: name, pushNotificationToken: pushNotificationToken ?? null }), 'POST', 'json', false);
+    let resp = await this.request(this.SERVER + '/auth/signup', JSON.stringify({ login: username, email: email, password: password, name: name, pushNotificationToken: (pushNotificationToken ?? this.pushNotificationToken ?? null) }), 'POST', 'json', false);
 
     if (resp.errors) return resp;
     if (resp.data.length === 0) { resp.errors = []; return resp; }

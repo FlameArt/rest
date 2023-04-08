@@ -26,6 +26,12 @@ interface IREST {
   unauthorized_callback: () => {},
 
   /**
+   * Токен приложения конкретного клиента для отправки пуш уведомлений именно ему
+   */
+  pushNotificationToken: string | null;
+
+
+  /**
    * Стандартное число запросов на страницу
    * @type {number}
    */
