@@ -116,7 +116,7 @@ interface IREST {
    * @param password 
    * @param name 
    */
-  signup(email: string | null, username: string | null, password: string, name: string | null): Promise<Authorized>,
+  signup(email: string | null, username: string | null, password: string, name: string | null, pushNotificationToken: string | null): Promise<Authorized>,
 
 
   /**

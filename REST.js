@@ -499,9 +499,9 @@ class FLAMEREST {
 
   }
 
-  async signup(email, username, password, name) {
+  async signup(email, username, password, name, pushNotificationToken) {
 
-    let resp = await this.request(this.SERVER + '/auth/signup', JSON.stringify({ login: username, email: email, password: password, name: name }), 'POST', 'json', false);
+    let resp = await this.request(this.SERVER + '/auth/signup', JSON.stringify({ login: username, email: email, password: password, name: name, pushNotificationToken: pushNotificationToken ?? null }), 'POST', 'json', false);
 
     if (resp.errors) return resp;
     if (resp.data.length === 0) { resp.errors = []; return resp; }
