@@ -117,6 +117,12 @@ class FLAMEREST {
                     Errs[err['field']] = Errs[err['field']] === undefined ? err['message'] : Errs[err['field']] + ". " + err['message']
                   }
                   ResolveBody.errors = Errs;
+                  break;
+                case 401:
+                  if (typeof this.unauthorized_callback === 'function') {
+                    this.unauthorized_callback();
+                  }
+                  break;
               }
 
             }
