@@ -113,7 +113,7 @@ interface IREST {
    * @param username 
    * @param password 
    */
-  auth(username?: string, password?: string): Promise<Authorized>,
+  auth(username?: string, password?: string, pushNotificationToken: object | null): Promise<Authorized>,
 
   /**
    * Зарегистрироваться с этим логином и паролем
@@ -122,7 +122,7 @@ interface IREST {
    * @param password 
    * @param name 
    */
-  signup(email: string | null, username: string | null, password: string, name: string | null, pushNotificationToken: string | null): Promise<Authorized>,
+  signup(email: string | null, username: string | null, password: string, name: string | null, pushNotificationToken: object | null): Promise<Authorized>,
 
 
   /**

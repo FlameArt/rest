@@ -497,7 +497,7 @@ class FLAMEREST {
       resp = await this.request(this.SERVER + '/auth/auth', JSON.stringify({}), 'POST', 'json', true);
     }
     else {
-      resp = await this.request(this.SERVER + '/auth/auth', JSON.stringify({ login: username, password: password }), 'POST', 'json', false);
+      resp = await this.request(this.SERVER + '/auth/auth', JSON.stringify({ login: username, password: password, pushNotificationToken: (pushNotificationToken ?? this.pushNotificationToken ?? null) }), 'POST', 'json', false);
     }
 
     if (resp.errors) return resp;
