@@ -130,6 +130,32 @@ interface IREST {
    */
   logout(): Promise<object>,
 
+
+  /**
+   * Восстановление пароля
+   * Запрос на восстановление пароля
+   * @param {*} email 
+   * @returns 
+   */
+  ResetPasswordRequest(email: string): Promise<any>,
+
+  /**
+   * Восстановление пароля
+   * Проверка токена восстановления
+   * @param {*} token токен подтверждения
+   * @returns 
+   */
+  ResetPasswordTokenCheck(token: string): Promise<any>,
+
+  /**
+   * Восстановление пароля
+   * Сохранение нового пароля
+   * @param {*} token 
+   * @param {*} password 
+   * @returns 
+   */
+  ResetPasswordSaveNewPassword(token: string, password: string): Promise<any>,
+
   /**
    * Подготовить объект под загрузку: загрузить данные из элементов [type=file]
    * Работает ссылочно, меняя основной массив

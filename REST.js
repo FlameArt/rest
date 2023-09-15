@@ -528,6 +528,58 @@ class FLAMEREST {
     return this.request(this.SERVER + '/auth/logout', '{}', 'POST');
   }
 
+  /**
+   * Восстановление пароля
+   * Запрос на восстановление пароля
+   * @param {*} email 
+   * @returns 
+   */
+  async ResetPasswordRequest(email) {
+
+    let resp = await this.request(this.SERVER + '/auth/resetpasswordrequest', JSON.stringify({ email: email }), 'POST', 'json', false);
+
+    if (resp.errors) return resp;
+    if (resp.data.length === 0) { resp.errors = []; return resp; }
+
+    return resp.data;
+
+  }
+
+  /**
+   * Восстановление пароля
+   * Проверка токена восстановления
+   * @param {*} token токен подтверждения
+   * @returns 
+   */
+  async ResetPasswordTokenCheck(token) {
+
+    let resp = await this.request(this.SERVER + '/auth/resettokencheck', JSON.stringify({ token: token }), 'POST', 'json', false);
+
+    if (resp.errors) return resp;
+    if (resp.data.length === 0) { resp.errors = []; return resp; }
+
+    return resp.data;
+
+  }
+
+  /**
+   * Восстановление пароля
+   * Сохранение нового пароля
+   * @param {*} token 
+   * @param {*} password 
+   * @returns 
+   */
+  async ResetPasswordSaveNewPassword(token, password) {
+
+    let resp = await this.request(this.SERVER + '/auth/resetconfirm', JSON.stringify({ token: token, password: password }), 'POST', 'json', false);
+
+    if (resp.errors) return resp;
+    if (resp.data.length === 0) { resp.errors = []; return resp; }
+
+    return resp.data;
+
+  }
+
 
   /**
    * Подготовить объект под загрузку: загрузить данные из элементов Input [type=file] / Clipboard / DataTransfer [Drag&Drop/Clipboard]
