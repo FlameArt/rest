@@ -490,7 +490,7 @@ class FLAMEREST {
       return new Promise((resolve, reject) => { resolve(JSON.parse(window.sessionStorage.getItem("crudschema"))) });
   }
 
-  async auth(username, password, isNeedToken) {
+  async auth(username, password, isNeedToken, pushNotificationToken) {
 
     let resp = null;
     if (this.token !== null && this.token !== undefined && this.token !== 'undefined' && (username === null || username === undefined)) {
