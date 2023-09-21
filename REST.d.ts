@@ -43,8 +43,9 @@ interface IREST {
    * @param {object|string} params Параметры, которые надо передать, могут быть в виде объекта или строки
    * @param {string} type Тип
    * @param {string} responseType Тип ответа: json или blob
+   * @param {Object} customHeaders объект с доп заголовками, которые надо включить в запрос
    */
-  request(url: string, params: object | string, type?: string, responseType?: string): object,
+  request(url: string, params: object | string, type?: string, responseType?: string, customHeaders?: object): object,
 
   /**
    * Получить выборку из таблицы через REST

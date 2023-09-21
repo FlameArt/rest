@@ -54,8 +54,9 @@ class FLAMEREST {
    * @param {object|string} params Параметры, которые надо передать, могут быть в виде объекта или строки
    * @param {string} type Тип
    * @param {string} responseType Тип ответа: json или blob
+   * @param {Object} customHeaders объект с доп заголовками, которые надо включить в запрос
    */
-  request(url, params, type = 'GET', responseType = 'json', isNeedToken = true) {
+  request(url, params, type = 'GET', responseType = 'json', isNeedToken = true, customHeaders = {}) {
 
     // Нормализуем параметры, если они есть
     if (typeof params === "object") {
@@ -80,9 +81,9 @@ class FLAMEREST {
           let requestBody = {
             method: type,
             mode: 'cors',
-            headers: {
+            headers: Object.assign({
               'Content-type': 'application/json; charset=utf-8'
-            }
+            }, customHeaders)
           };
 
           if (type !== 'GET')
