@@ -45,7 +45,7 @@ interface IREST {
    * @param {string} responseType Тип ответа: json или blob
    * @param {Object} customHeaders объект с доп заголовками, которые надо включить в запрос
    */
-  request(url: string, params: object | string, type?: string, responseType?: string, isNeedToken: boolean, customHeaders?: object): object,
+  request(url: string, params: object | string, type?: string, responseType?: 'json' | 'blob', isNeedToken?: boolean, customHeaders?: object): object,
 
   /**
    * Получить выборку из таблицы через REST
