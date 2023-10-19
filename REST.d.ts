@@ -172,6 +172,14 @@ interface IREST {
    */
   fillObject<T>(object: T, values: any): T,
 
+  /**
+   * Прочесть файл асинхронно
+   * @param {File} file 
+   * @param {'data' | 'text'} readAs
+   * @returns {Promise<string>}
+   */
+  readFileAsync(file: File, readAs: 'data' | 'text'): Promise<string>
+
 }
 
 

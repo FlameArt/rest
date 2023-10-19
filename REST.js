@@ -658,9 +658,10 @@ class FLAMEREST {
   /**
    * Прочесть файл асинхронно
    * @param {File} file 
+   * @param {'data' | 'text'} readAs
    * @returns {Promise<string>}
    */
-  readFileAsync(file) {
+  readFileAsync(file, readAs = 'data') {
     return new Promise((resolve, reject) => {
       let reader = new FileReader();
 
@@ -670,7 +671,11 @@ class FLAMEREST {
 
       reader.onerror = reject;
 
-      reader.readAsDataURL(file);
+      if (readAs === 'data')
+        reader.readAsDataURL(file);
+      if (readAs === 'text')
+        reader.readAsText(file);
+
     })
   }
 
