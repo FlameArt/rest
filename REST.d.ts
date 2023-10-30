@@ -69,7 +69,7 @@ interface IREST {
    * @param {object} params 
    * @returns 
    */
-  all<T>(table: string, params?: { where?: object, extfields?: object | Array<string>, fields?: object | Array<string>, sort?: Array<string>, page?: number, perPage?: number, tree?: number }): Promise<Rows<T>>,
+  all<T>(table: string, params?: { where?: object, extfields?: object | Array<string>, fields?: object | Array<string>, sort?: Array<string>, page?: number, perPage?: number, tree?: number, params?: any }): Promise<Rows<T>>,
 
   /**
      * Получить одну запись по ID или по условию выборки [первая запись]

@@ -319,9 +319,10 @@ class FLAMEREST {
    * @param format
    * @param titles Это чтобы мы могли контроллить какие названия полей мы будет загружать при экспорте, чтобы они были как в таблице
    * @param tree дерево
+   * @param params Доп параметры для кастомизации запроса на беке
    * @return Promise<>
    */
-  get(table, where, extfields, fields, sortfields, page, perPage, RemoveDuplicates, format, titles, tree) {
+  get(table, where, extfields, fields, sortfields, page, perPage, RemoveDuplicates, format, titles, tree, params) {
 
     // Нормализуем имена таблиц
     table = table.replace(/_/g, "");
@@ -353,6 +354,9 @@ class FLAMEREST {
     if (extfields !== undefined && extfields !== null)
       json.extfields = extfields;
 
+    if (params !== undefined && params !== null)
+      json.params = params;
+
     if (RemoveDuplicates !== undefined && RemoveDuplicates !== null)
       json.RemoveDuplicates = true;
 
@@ -378,7 +382,7 @@ class FLAMEREST {
    * @returns {object}
    */
   all(table, params) {
-    return this.get(table, params?.where, params?.extfields, params?.fields, params?.sort, params?.page, params?.perPage, null, null, null, params?.tree);
+    return this.get(table, params?.where, params?.extfields, params?.fields, params?.sort, params?.page, params?.perPage, null, null, null, params?.tree, params?.params);
   }
 
   /**
