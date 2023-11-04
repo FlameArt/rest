@@ -320,9 +320,10 @@ class FLAMEREST {
    * @param titles Это чтобы мы могли контроллить какие названия полей мы будет загружать при экспорте, чтобы они были как в таблице
    * @param tree дерево
    * @param params Доп параметры для кастомизации запроса на беке
+   * @param exportData имя файла для экспорта
    * @return Promise<>
    */
-  get(table, where, extfields, fields, sortfields, page, perPage, RemoveDuplicates, format, titles, tree, params) {
+  get(table, where, extfields, fields, sortfields, page, perPage, RemoveDuplicates, format, titles, tree, params, exportData) {
 
     // Нормализуем имена таблиц
     table = table.replace(/_/g, "");
@@ -345,9 +346,6 @@ class FLAMEREST {
     if (fields !== undefined && fields !== null)
       json.fields = fields;
 
-    if (titles !== undefined && titles !== null)
-      json.titles = titles;
-
     if (sortfields !== undefined && sortfields !== null)
       json.sort = sortfields;
 
@@ -360,12 +358,18 @@ class FLAMEREST {
     if (RemoveDuplicates !== undefined && RemoveDuplicates !== null)
       json.RemoveDuplicates = true;
 
-    if (format !== undefined && format !== null) {
-      json.format = format;
+    if (titles !== undefined && titles !== null)
+      json.titles = titles;
+
+    // экспорт
+    if (exportData !== undefined && exportData !== null) {
+      json.export = {
+        format: exportData.format ?? 'xlsx',
+        titles: exportData.titles ?? [],
+        filename: exportData.filename ?? 'export_' + new Date().toUTCString + ".xlsx",
+      };
       responseType = "blob";
     }
-
-
 
     // Страницы
     json['per-page'] = perPage === undefined ? this.perPageDefault : perPage;
@@ -382,7 +386,7 @@ class FLAMEREST {
    * @returns {object}
    */
   all(table, params) {
-    return this.get(table, params?.where, params?.extfields, params?.fields, params?.sort, params?.page, params?.perPage, null, null, null, params?.tree, params?.params);
+    return this.get(table, params?.where, params?.extfields, params?.fields, params?.sort, params?.page, params?.perPage, null, null, null, params?.tree, params?.params, params?.export);
   }
 
   /**
