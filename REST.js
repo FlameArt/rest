@@ -39,6 +39,12 @@ class FLAMEREST {
      * Если авторизация по токену, то он сюда подставляется
      */
     this.isAuthByJWTQuery = true;
+
+    /**
+     * Режим авторизации: Bearer|Link
+     */
+    this.authMode = "Bearer";
+
     this.token = null;
 
   }
@@ -74,7 +80,12 @@ class FLAMEREST {
 
           // Авторизация
           if (this.isAuthByJWTQuery && isNeedToken === true && this.token !== null && this.token !== undefined && this.token !== 'undefined') {
-            url = url + (url.indexOf("?") === -1 ? "?" : "&") + "access-token=" + this.token;
+            switch (this.authMode) {
+              case 'Link':
+                url = url + (url.indexOf("?") === -1 ? "?" : "&") + "access-token=" + this.token;
+              default:
+                Object.assign(customHeaders, { 'Authorization': 'Bearer ' + this.token })
+            }
           }
 
           // Тело запроса
@@ -366,7 +377,7 @@ class FLAMEREST {
       json.export = {
         format: exportData.format ?? 'xlsx',
         titles: exportData.titles ?? [],
-        filename: exportData.filename ?? 'export_' + new Date().toUTCString + ".xlsx",
+        filename: exportData.filename ?? 'export_' + Date.now() + ".xlsx",
       };
       responseType = "blob";
     }
