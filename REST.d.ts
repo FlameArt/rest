@@ -92,7 +92,7 @@ interface IREST {
      * @param {object|Array} fields 
      * @param {string} primaryKeyName если указан ID, то указать название первичного ключа, если от id он отличается
    */
-  one<T>(table: string, IDOrWhere: number | string | object, extfields?: object | Array<string>, fields?: object | Array<string> | null, primaryKeyName?: string): Promise<T | null>,
+  one<T>(table: string, IDOrWhere: number | string | object, extfields?: object | Array<string>, fields?: object | Array<string> | null, primaryKeyName?: string): Promise<Rows<T>>,
 
   /**
    * Создать новую запись
