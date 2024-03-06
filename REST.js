@@ -88,6 +88,12 @@ class FLAMEREST {
             }
           }
 
+          // Уникальный user_hash
+          let user_hash = localStorage.getItem('user_hash');
+          if (user_hash) {
+            Object.assign(customHeaders, { udata: user_hash });
+          }
+
           // Тело запроса
           let requestBody = {
             method: type,
