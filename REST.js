@@ -170,6 +170,8 @@ class FLAMEREST {
             }
           }
 
+
+
           // Заполняем тело ответа заголовками
           ResolveBody.type = "json";
           ResolveBody.data = {};
@@ -531,6 +533,14 @@ class FLAMEREST {
 
     // после успешной авторизации устанавливаем токен
     if (typeof resp.token === 'string') this.token = resp.token;
+
+    // Сохраняем хеш юзера автоматически
+    let user_hash = localStorage.getItem('user_hash');
+
+    // Не трогаем хранилище при каждом запросе, только если нужно переустановить хеш [авторизация на др. устройстве]
+    if (resp?.User?.user_hash && resp.User.user_hash !== user_hash) {
+      localStorage.setItem('user_hash', resp.User.user_hash);
+    }
 
     return resp.data;
 
