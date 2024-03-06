@@ -538,8 +538,8 @@ class FLAMEREST {
     let user_hash = localStorage.getItem('user_hash');
 
     // Не трогаем хранилище при каждом запросе, только если нужно переустановить хеш [авторизация на др. устройстве]
-    if (resp?.User?.user_hash && resp.User.user_hash !== user_hash) {
-      localStorage.setItem('user_hash', resp.User.user_hash);
+    if (resp?.data?.User?.user_hash && resp.data.User.user_hash !== user_hash) {
+      localStorage.setItem('user_hash', resp.data.User.user_hash);
     }
 
     return resp.data;
