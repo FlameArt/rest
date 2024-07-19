@@ -65,8 +65,10 @@ class FLAMEREST {
   request(url, params, type = 'GET', responseType = 'json', isNeedToken = true, customHeaders = {}) {
 
     // Нормализуем параметры, если они есть
-    if (typeof params === "object") {
+    if (typeof params === "object" && params !== null) {
       params = JSON.stringify(params);
+      type = 'POST';
+      responseType = 'json';
     }
 
     let that = this;
