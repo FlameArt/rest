@@ -71,6 +71,9 @@ class FLAMEREST {
       responseType = 'json';
     }
 
+    // Подставляем сервер автоматом в запрос начинающийся с /
+    if (url[0] === '/' && url[1] !== '/') url = this.SERVER + url;
+
     let that = this;
 
     // Фетч поддерживается - получаем через него, это быстрее
