@@ -773,7 +773,7 @@ class FLAMEREST {
    */
   async hmac_sha256(message, secret_key) {
 
-    if (!(typeof data === 'string') && !(typeof key === 'string'))
+    if (!(typeof message === 'string') && !(typeof secret_key === 'string'))
       throw new TypeError('Expected string input data.')
 
     const enc = new TextEncoder();
