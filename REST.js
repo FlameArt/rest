@@ -111,6 +111,18 @@ class FLAMEREST {
           if (type !== 'GET')
             requestBody.body = params;
 
+          // Создаём подпись каждого запроса
+          let SIGN = "empty";
+          try {
+            SIGN = await this.hmac_sha256(requestBody.body, user_hash);
+          }
+          catch (ex) {
+            window.alert('Can`t create a request');
+            throw ex;
+          }
+
+          requestBody.headers['sign'] = SIGN;
+
           // Делаем запрос
           let response = await fetch(url, requestBody);
 
@@ -752,6 +764,61 @@ class FLAMEREST {
     }
     return result;
   }
+
+  /**
+   * 
+   * @param {string} data
+   * @param {string} key
+   * @returns 
+   */
+  async hmac_sha256(message, secret_key) {
+
+    if (!(typeof data === 'string') && !(typeof key === 'string'))
+      throw new TypeError('Expected string input data.')
+
+    const enc = new TextEncoder();
+    const encodedKey = enc.encode(secret_key);
+    const encodedMessage = enc.encode(message);
+
+    const data = encodedMessage;
+    const key = encodedKey;
+
+    if (!(data instanceof Uint8Array) && !(key instanceof Uint8Array))
+      throw new TypeError('Expected Uint8Array input data.')
+
+
+    if (typeof window === 'undefined' && typeof Deno === 'undefined') {
+      const { createHmac } = await import('crypto')
+      return Uint8Array.from([...createHmac('SHA256', key).update(data).digest()])
+    } else {
+
+      if (typeof window.crypto.subtle === 'undefined') throw "Can`t create hash";
+
+      return window.crypto.subtle
+        .importKey(
+          'raw',
+          key,
+          { name: 'HMAC', hash: { name: 'SHA-256' } },
+          false,
+          ['sign', 'verify']
+        )
+        .then(key => window.crypto.subtle.sign('HMAC', key, data))
+        .then(signature => {
+
+          // Преобразование ArrayBuffer в Uint8Array
+          const signatureArray = new Uint8Array(signature);
+
+          // Преобразование Uint8Array в строку в формате Hex
+          const hexString = Array.from(signatureArray)
+            .map(byte => byte.toString(16).padStart(2, '0'))
+            .join('');
+
+          return hexString;
+
+        })
+    }
+  }
+
 
 
 }
