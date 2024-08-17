@@ -117,8 +117,8 @@ class FLAMEREST {
             SIGN = await this.hmac_sha256(requestBody.body, user_hash);
           }
           catch (ex) {
-            window.alert('Can`t create a request');
-            throw ex;
+            // window.alert('Can`t create a request');
+            // throw ex;
           }
 
           requestBody.headers['sign'] = SIGN;
