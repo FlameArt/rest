@@ -57,7 +57,7 @@ class FLAMEREST {
   /**
    *
    * @param {string} url Адрес
-   * @param {object|string} params Параметры, которые надо передать, могут быть в виде объекта или строки
+   * @param {object|string|FormData} params Параметры, которые надо передать, могут быть в виде объекта или строки
    * @param {string} type Тип
    * @param {string} responseType Тип ответа: json или blob
    * @param {Object} customHeaders объект с доп заголовками, которые надо включить в запрос
@@ -66,10 +66,15 @@ class FLAMEREST {
 
     // Нормализуем параметры, если они есть
     if (typeof params === "object" && params !== null) {
-      params = JSON.stringify(params);
+
+      if (!(params instanceof FormData))
+        params = JSON.stringify(params);
+
       type = 'POST';
       responseType = 'json';
+
     }
+
 
     // Подставляем сервер автоматом в запрос начинающийся с /
     if (url[0] === '/' && url[1] !== '/') url = this.SERVER + url;
@@ -103,12 +108,14 @@ class FLAMEREST {
           let requestBody = {
             method: type,
             mode: 'cors',
-            headers: Object.assign({
-              'Content-type': 'application/json; charset=utf-8'
-            }, customHeaders)
+            headers: Object.assign(
+              (params instanceof FormData ? {} : {
+                'Content-type': 'application/json; charset=utf-8'
+              }), customHeaders)
           };
 
           if (type !== 'GET')
+            // Принимает и formData тоже и чистую json строку
             requestBody.body = params;
 
           // Создаём подпись каждого запроса
@@ -458,7 +465,8 @@ class FLAMEREST {
     table = table.replace(/_/g, "");
 
     // Подготовить значения
-    await this.prepare(values);
+    if (!(values instanceof FormData))
+      await this.prepare(values);
 
     if (appendTo === undefined) appendTo = null;
     if (insertAfter === undefined) insertAfter = null;
@@ -468,7 +476,7 @@ class FLAMEREST {
       + (appendTo !== null ? '&appendTo=' + appendTo : '')
       + (insertAfter !== null ? '&insertAfter=' + insertAfter : '')
       + (insertFirst !== null ? '&insertFirst=' + insertFirst : '')
-      , JSON.stringify(values), 'POST');
+      , (values instanceof FormData ? values : JSON.stringify(values)), 'POST');
 
   }
 
@@ -506,7 +514,8 @@ class FLAMEREST {
     table = table.replace(/_/g, "");
 
     // Подготовить значения
-    await this.prepare(values);
+    if (!(values instanceof FormData))
+      await this.prepare(values);
 
     if (appendTo === undefined) appendTo = null;
     if (insertAfter === undefined) insertAfter = null;
@@ -516,7 +525,7 @@ class FLAMEREST {
       + (appendTo !== null ? '&appendTo=' + appendTo : '')
       + (insertAfter !== null ? '&insertAfter=' + insertAfter : '')
       + (insertFirst !== null ? '&insertFirst=' + insertFirst : '')
-      , JSON.stringify(values), 'PATCH');
+      , (values instanceof FormData ? values : JSON.stringify(values)), 'PATCH');
   }
 
   /**
@@ -638,9 +647,12 @@ class FLAMEREST {
    * Подготовить объект под загрузку: загрузить данные из элементов Input [type=file] / Clipboard / DataTransfer [Drag&Drop/Clipboard]
    * @param {object} values 
    */
-  async prepare(values) {
+  async prepare(values, asFormData = false) {
 
     // Если в один из параметров передан FileList или input[type=file], т.е. нужно загрузить файлы
+
+    const formData = new FormData();
+
     for (let val in values) {
 
       // Пустые значения нам не нужны
@@ -676,10 +688,12 @@ class FLAMEREST {
         if (value instanceof FileList) {
           let newValues = [];
           value = Array.from(value);
-          for (let file in value) {
+          for (let index = 0; index < value.length; index++) {
+            formData.append(val + "[]", value[index])
             newValues.push({
-              'name': value[file].name,
-              'data': await this.readFileAsync(value[file]),
+              'name': value[index].name,
+              'data': asFormData ? null : await this.readFileAsync(value[index]),
+              'number': index, // Здесь индекс
               'id': this.generateID(32)
             });
           }
@@ -703,7 +717,9 @@ class FLAMEREST {
       }
     }
 
-    return values;
+    formData.append("json", JSON.stringify(values));
+
+    return asFormData ? formData : values;
 
   }
 
