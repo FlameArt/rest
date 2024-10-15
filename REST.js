@@ -70,7 +70,9 @@ class FLAMEREST {
       if (!(params instanceof FormData))
         params = JSON.stringify(params);
 
-      type = 'POST';
+      if (type === 'GET')
+        type = 'POST';
+      
       responseType = 'json';
 
     }
