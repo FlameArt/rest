@@ -527,7 +527,7 @@ class FLAMEREST {
       + (appendTo !== null ? '&appendTo=' + appendTo : '')
       + (insertAfter !== null ? '&insertAfter=' + insertAfter : '')
       + (insertFirst !== null ? '&insertFirst=' + insertFirst : '')
-      , (values instanceof FormData ? values : JSON.stringify(values)), 'PATCH');
+      , (values instanceof FormData ? values : JSON.stringify(values)), 'POST');
   }
 
   /**
@@ -574,9 +574,9 @@ class FLAMEREST {
 
   }
 
-  async signup(email, username, password, name, pushNotificationToken) {
+  async signup(email, username, password, name, pushNotificationToken, data = null) {
 
-    let resp = await this.request(this.SERVER + '/auth/signup', JSON.stringify({ login: username, email: email, password: password, name: name, pushNotificationToken: (pushNotificationToken ?? this.pushNotificationToken ?? null) }), 'POST', 'json', false);
+    let resp = await this.request(this.SERVER + '/auth/signup', JSON.stringify({ login: username, email: email, password: password, name: name, data: data, pushNotificationToken: (pushNotificationToken ?? this.pushNotificationToken ?? null) }), 'POST', 'json', false);
 
     if (resp.errors) return resp;
     if (resp.data.length === 0) { resp.errors = []; return resp; }
