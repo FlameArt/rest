@@ -45,7 +45,7 @@ interface IREST {
    * @param {string} responseType Тип ответа: json или blob
    * @param {Object} customHeaders объект с доп заголовками, которые надо включить в запрос
    */
-  request(url: string, params: object | string, type?: string, responseType?: 'json' | 'blob', isNeedToken?: boolean, customHeaders?: object): Promise<object>,
+  request(url: string, params: object | string, type?: string, responseType?: 'json' | 'blob', isNeedToken?: boolean, customHeaders?: object): Promise<CustomAnyRequest | Rows<any> | Row<any>>,
 
   /**
    * Получить выборку из таблицы через REST
@@ -198,30 +198,21 @@ interface IREST {
 
 
 /**
- * Стандартный ответ от Request с несколькими строками
+ * Базовый ответ от сервера
  */
-export type Rows<T> = {
-  type: string,
-  status: number,
-  ok: boolean,
-  data?: Array<T>,
-  errors: object | undefined,
-  message: string | undefined,
-  pages: {
-    page: number,
-    perPage: number,
-    count: number,
-    total: number,
-  }
-}
-
-export type Row<T> = {
+export type BaseResponse<T> = {
   type: string,
   status: number,
   ok: boolean,
   data?: T,
   errors: object | undefined,
   message: string | undefined,
+}
+
+/**
+ * Часть ответа с пагинацией
+ */
+export type Paginated = {
   pages: {
     page: number,
     perPage: number,
@@ -231,16 +222,21 @@ export type Row<T> = {
 }
 
 /**
+ * Стандартный ответ от Request с несколькими строками
+ */
+export type Rows<T> = BaseResponse<Array<T>> & Paginated;
+
+export type Row<T> = BaseResponse<T> & Paginated;
+
+export type CustomRequest<T> = BaseResponse<T>;
+
+export type CustomAnyRequest = BaseResponse<any>;
+
+
+/**
  * Стандартный ответ от Request с изменённой строкой
  */
-export type SavedObject<T> = {
-  type: string,
-  status: Number,
-  ok: boolean,
-  data?: T,
-  errors: Object | undefined,
-  message: string | undefined,
-}
+export type SavedObject<T> = BaseResponse<T>;
 
 /**
  * Результат авторизации

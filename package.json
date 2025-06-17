@@ -1,11 +1,11 @@
 {
   "name": "flamerest",
-  "version": "1.0.111",
+  "version": "1.0.119",
   "description": "",
   "main": "REST.js",
   "typings": "./REST.d.ts",
   "scripts": {
-    "push and publish": "git push && npm --no-git-tag-version version patch && npm publish"
+    "publishx": "git push && npm --no-git-tag-version version patch && npm publish"
   },
   "repository": {
     "type": "git",
