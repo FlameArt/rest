@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документация по компоненту FlameRestTable</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; }
+        h1, h2, h3 { color: #2c3e50; border-bottom: 2px solid #eaecef; padding-bottom: 0.3em; }
+        h1 { font-size: 2.5em; }
+        h2 { font-size: 2em; }
+        h3 { font-size: 1.5em; }
+        code { background-color: #e8e8e8; padding: 0.2em 0.4em; margin: 0; font-size: 85%; border-radius: 3px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace; }
+        pre { background-color: #f6f8fa; border: 1px solid #ddd; border-radius: 3px; padding: 16px; overflow: auto; }
+        pre code { padding: 0; margin: 0; background-color: transparent; border: none; }
+        .prop-name { font-weight: bold; font-family: monospace; }
+        .prop-type { font-style: italic; color: #e96900; }
+        .prop-default { color: #999; }
+        .prop-desc { margin-top: 5px; margin-left: 20px;}
+        .prop-block { margin-bottom: 20px; border-left: 3px solid #ccc; padding-left: 15px; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 1em;}
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .required { color: #d04437; font-weight: bold; }
+        .note { background-color: #fff9e6; border-left: 4px solid #ffc107; padding: 10px 15px; margin: 1em 0; }
+    </style>
+</head>
+<body>
+
+    <h1>Документация по компоненту FlameRestTable</h1>
+
+    <p>Этот документ описывает, как использовать Vue-компонент <code>FlameRestTable</code> для создания мощных и настраиваемых таблиц с поддержкой REST API на базе библиотеки <code>flamerest</code>.</p>
+
+    <h2>Содержание</h2>
+    <ul>
+        <li><a href="#setup">Установка и настройка</a></li>
+        <li><a href="#basic-usage">Базовое использование</a></li>
+        <li><a href="#props">Props компонента</a></li>
+        <li><a href="#table-opts">Конфигурация (TableOpts)</a></li>
+        <li><a href="#column-opts">Конфигурация колонок (IColumn)</a></li>
+        <li><a href="#slots">Слоты</a></li>
+        <li><a href="#methods">Методы</a></li>
+        <li><a href="#example">Полный пример</a></li>
+    </ul>
+
+    <h2 id="setup">Установка и настройка</h2>
+    <p>Для использования компонента, сперва установите его из npm:</p>
+    <pre><code>npm install flameresttable flamerest</code></pre>
+    <p>Затем импортируйте компонент <code>FlameRestTable</code> и класс опций <code>TableOpts</code> в вашем Vue-компоненте.</p>
+    <pre><code class="language-vue">&lt;template&gt;
+  &lt;div&gt;
+    &lt;FlameRestTable
+      :model="UserModel"
+      :opts="tableOpts"
+      ref="flameTable"
+    /&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script setup&gt;
+import { ref } from 'vue';
+import { FlameRestTable, TableOpts } from 'flameresttable';
+import UserModel from './models/User'; // Пример пути до вашей REST-модели, она должна быть унаследована от REST.Model из flamerest
+
+const flameTable = ref(null); // Ref для доступа к экземпляру таблицы
+
+const tableOpts = new TableOpts();
+// ... настройка tableOpts
+&lt;/script&gt;</code></pre>
+
+    <h2 id="basic-usage">Базовое использование</h2>
+    <p>Для отображения таблицы достаточно передать модель данных и, при необходимости, объект с опциями.</p>
+    <pre><code class="language-javascript">// UserModel.ts - Пример модели
+// Модель должна быть унаследована от REST.Model из библиотеки `flamerest`.
+import REST from 'flamerest'; 
+
+export default class User extends REST.Model {
+    static resourceName = 'users';
+    static primaryKeys = ['id'];
+}
+
+// ParentComponent.vue
+import { FlameRestTable, TableOpts } from 'flameresttable';
+import User from './models/User';
+
+const tableOpts = new TableOpts();
+tableOpts.set('id', { title: 'ID' });
+tableOpts.set('username', { title: 'Имя пользователя' });
+tableOpts.set('email', { title: 'Email' });
+</code></pre>
+    <p>В шаблоне:</p>
+    <pre><code class="language-vue">&lt;FlameRestTable :model="User" :opts="tableOpts" /&gt;</code></pre>
+    <p>Этого достаточно, чтобы отрендерить таблицу с данными из модели <code>User</code>, которая автоматически сделает запрос на бэкенд.</p>
+
+    <h2 id="props">Props компонента</h2>
+    <div class="prop-block">
+        <div class="prop-name">model <span class="required">*</span></div>
+        <div class="prop-type">Function (Class)</div>
+        <div class="prop-desc">Класс модели данных, который будет использоваться для запросов к REST API. Модель должна быть унаследована от <code>REST.Model</code> из пакета <code>flamerest</code>.</div>
+    </div>
+    <div class="prop-block">
+        <div class="prop-name">opts</div>
+        <div class="prop-type">TableOpts</div>
+        <div class="prop-default">new TableOpts()</div>
+        <div class="prop-desc">Объект с настройками таблицы. Создается как экземпляр класса <code>TableOpts</code>, импортированного из <code>flameresttable</code>.</div>
+    </div>
+     <div class="prop-block">
+        <div class="prop-name">rows</div>
+        <div class="prop-type">Array</div>
+        <div class="prop-default">[]</div>
+        <div class="prop-desc">Используется для первоначальной инициализации, но в основном компонент сам загружает данные через модель.</div>
+    </div>
+
+    <h2 id="table-opts">Конфигурация (TableOpts)</h2>
+    <p>Класс <code>TableOpts</code> предоставляет широкие возможности для настройки поведения и внешнего вида таблицы.</p>
+    
+    <h3>Основные опции</h3>
+    <ul>
+        <li><span class="prop-name">autoload</span>: <span class="prop-type">boolean</span> (default: <code>true</code>) - Загружать ли данные автоматически при монтировании компонента.</li>
+        <li><span class="prop-name">rowSelectors</span>: <span class="prop-type">boolean</span> (default: <code>true</code>) - Показывать ли чекбоксы для выбора строк.</li>
+        <li><span class="prop-name">displayMode</span>: <span class="prop-type">'table' | 'custom'</span> (default: <code>'table'</code>) - Режим отображения. <code>'table'</code> для стандартной таблицы, <code>'custom'</code> для кастомного рендеринга через слот <code>CustomRow</code>.</li>
+        <li><span class="prop-name">onRowClickOpenSlot</span>: <span class="prop-type">'popup' | 'rowspace' | 'none'</span> (default: <code>'rowspace'</code>) - Что делать при клике на строку. <code>'rowspace'</code> открывает под-пространство (слот <code>RowSubSlot</code>), <code>'popup'</code> открывает модальное окно редактирования, <code>'none'</code> ничего не делает.</li>
+        <li><span class="prop-name">lang</span>: <span class="prop-type">'ru' | 'en'</span> (default: <code>'ru'</code>) - Язык для встроенных текстовых элементов.</li>
+        <li><span class="prop-name">LoadParams</span>: <span class="prop-type">ITableLoadParams</span> (default: <code>{}</code>) - Стандартные параметры для запроса данных (например, <code>{ expand: ['profile'] }</code>).</li>
+    </ul>
+
+    <h3>Кнопки и действия</h3>
+    <ul>
+        <li><span class="prop-name">Add</span>: <span class="prop-type">object</span> - Настройки кнопки "Добавить".
+            <ul>
+                <li><code>can</code>: <span class="prop-type">boolean</span> (default: <code>true</code>)</li>
+                <li><code>buttonTitle</code>: <span class="prop-type">string</span> (default: <code>'Добавить'</code>)</li>
+            </ul>
+        </li>
+        <li><span class="prop-name">Edit</span>: <span class="prop-type">object</span> - Настройки кнопки "Изменить".
+            <ul><li><code>can</code>: <span class="prop-type">boolean</span> (default: <code>true</code>)</li></ul>
+        </li>
+        <li><span class="prop-name">Remove</span>: <span class="prop-type">object</span> - Настройки кнопки "Удалить".
+            <ul><li><code>can</code>: <span class="prop-type">boolean</span> (default: <code>true</code>)</li></ul>
+        </li>
+        <li><span class="prop-name">Export</span>: <span class="prop-type">object</span> - Настройки экспорта.
+            <ul>
+                <li><code>isShow</code>: <span class="prop-type">boolean</span> (default: <code>true</code>) - Показать выпадающий список с действиями экспорта.</li>
+                <li><code>CSV.can</code>: <span class="prop-type">boolean</span> (default: <code>false</code>) - Показать отдельную кнопку экспорта в CSV.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3>Пагинация</h3>
+    <ul>
+       <li><span class="prop-name">Pagination.type</span>: <span class="prop-type">'scrollable' | 'pages'</span> (default: <code>'pages'</code>) - Тип пагинации. <code>'pages'</code> - классическая, <code>'scrollable'</code> - бесконечная прокрутка.</li>
+    </ul>
+
+     <h3>Обработчики событий (Callbacks)</h3>
+    <ul>
+        <li><span class="prop-name">onBeforeUpdate</span>: <span class="prop-type">(filters: object, isExport: boolean) => boolean</span> - Функция, вызываемая перед каждым запросом данных. Если вернет <code>false</code>, запрос будет отменен.</li>
+        <li><span class="prop-name">customDownloadHandler</span>: <span class="prop-type">(data: Blob, filename: string, mime: string) => void</span> - Кастомный обработчик для скачивания файлов экспорта.</li>
+        <li><span class="prop-name">Popup.load</span>: <span class="prop-type">async (row, table) => void</span> - Вызывается при открытии попапа редактирования, для дополнительной загрузки данных.</li>
+        <li><span class="prop-name">Popup.beforeEdit</span>: <span class="prop-type">async (row, table) => boolean</span> - Вызывается перед сохранением изменений. Если вернет <code>false</code>, сохранение будет отменено.</li>
+        <li><span class="prop-name">Popup.beforeAdd</span>: <span class="prop-type">async (row, table) => boolean</span> - Аналогично для добавления новой записи.</li>
+    </ul>
+
+    <h3>Методы для конфигурации колонок</h3>
+    <ul>
+        <li><span class="prop-name">set(name, opts)</span>: Устанавливает опции для колонки.</li>
+        <li><span class="prop-name">delete(name | names)</span>: Скрывает колонку(и) из всех представлений (таблица, фильтры, попап).</li>
+        <li><span class="prop-name">addVirtual(name, opts)</span>: Добавляет "виртуальную" колонку, которая не существует в модели, но может использоваться для кастомных фильтров или отображения.</li>
+    </ul>
+
+    <h2 id="column-opts">Конфигурация колонок (IColumn)</h2>
+    <p>Опции для каждой колонки задаются через метод <code>opts.set('columnName', { ... })</code>. Каждая колонка может иметь множество настроек, сгруппированных по областям применения.</p>
+
+    <h3>Общие</h3>
+    <ul>
+        <li><span class="prop-name">title</span>: <span class="prop-type">string</span> - Глобальный заголовок для колонки.</li>
+    </ul>
+
+    <h3><code>Table</code> - Отображение в таблице</h3>
+    <ul>
+        <li><span class="prop-name">isShow</span>: <span class="prop-type">boolean</span> (default: <code>true</code>) - Показывать ли колонку в таблице.</li>
+        <li><span class="prop-name">title</span>: <span class="prop-type">string</span> - Заголовок колонки в таблице (переопределяет общий <code>title</code>).</li>
+        <li><span class="prop-name">value</span>: <span class="prop-type">(row, column) => string</span> - Функция для форматирования значения в ячейке.</li>
+        <li><span class="prop-name">isRawValue</span>: <span class="prop-type">boolean</span> (default: <code>false</code>) - Если <code>true</code>, результат функции <code>value</code> будет вставлен как HTML (осторожно, XSS!).</li>
+        <li><span class="prop-name">click</span>: <span class="prop-type">(row, column) => void</span> - Обработчик клика по ячейке.</li>
+        <li><span class="prop-name">classes</span> / <span class="prop-name">classesHeader</span>: <span class="prop-type">string</span> - CSS классы для ячеек и заголовка.</li>
+        <li><span class="prop-name">width</span>: <span class="prop-type">number</span> - Ширина колонки в пикселях.</li>
+    </ul>
+
+    <h3><code>Filter</code> - Фильтрация</h3>
+    <ul>
+        <li><span class="prop-name">isShow</span>: <span class="prop-type">boolean</span> (default: <code>true</code>) - Показывать ли фильтр для этой колонки.</li>
+        <li><span class="prop-name">type</span>: <span class="prop-type">"text" | "fixed" | "fulltext" | "number" | "date" | "daterange" | "selector"</span> - Тип фильтра.</li>
+        <li><span class="prop-name">selector.multiselect</span>: <span class="prop-type">boolean</span> (default: <code>true</code>) - Для типа <code>selector</code>, разрешить ли множественный выбор.</li>
+        <li><span class="prop-name">selector.mode</span>: <span class="prop-type">'vertical' | 'horizontal'</span> (default: <code>'vertical'</code>) - Режим отображения селектора.</li>
+    </ul>
+
+    <h3><code>Popup</code> - Попап добавления/редактирования</h3>
+    <ul>
+        <li><span class="prop-name">isShow</span>: <span class="prop-type">boolean</span> (default: <code>true</code>) - Показывать ли поле в попапе.</li>
+        <li><span class="prop-name">isEnabled</span>: <span class="prop-type">boolean</span> (default: <code>true</code>) - Доступно ли поле для редактирования.</li>
+        <li><span class="prop-name">title</span> / <span class="prop-name">desc</span> / <span class="prop-name">placeholder</span>: <span class="prop-type">string</span> - Заголовки и подсказки.</li>
+        <li><span class="prop-name">popupType</span>: <span class="prop-type">"string" | "text" | "button" | "date" | "selector" | "image" | "file"</span> - Тип поля в форме.</li>
+        <li><span class="prop-name">isSendFromAdd</span> / <span class="prop-name">isSendFromEdit</span>: <span class="prop-type">boolean</span> (default: <code>true</code>) - Отправлять ли значение поля при создании/редактировании.</li>
+    </ul>
+    
+    <h3><code>Selector</code> - Для связанных данных</h3>
+    <p>Эта секция используется для всех селекторов: в фильтрах, в попапах и для замены ID на читаемые значения в таблице.</p>
+    <ul>
+        <li><span class="prop-name">model</span>: <span class="prop-type">Class</span> - Модель, из которой будут автоматически загружаться значения для селектора.</li>
+        <li><span class="prop-name">loader</span>: <span class="prop-type">(rows?) => ITableSelectorItem[]</span> - Альтернатива `model`, функция для ручной загрузки значений.</li>
+        <li><span class="prop-name">values</span>: <span class="prop-type">ITableSelectorItem[]</span> - Жестко заданный список значений.</li>
+        <li><span class="prop-name">preload</span>: <span class="prop-type">boolean</span> (default: <code>true</code>) - Предзагружать ли значения селектора при инициализации таблицы.</li>
+    </ul>
+
+    <h2 id="slots">Слоты</h2>
+    <p>Компонент предоставляет несколько слотов для кастомизации.</p>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Имя слота</th>
+                <th>Параметры</th>
+                <th>Описание</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>defaultButtons</code></td>
+                <td>-</td>
+                <td>Для добавления кнопок слева от стандартных (Добавить, Экспорт) на панели задач.</td>
+            </tr>
+            <tr>
+                <td><code>otherButtons</code></td>
+                <td>-</td>
+                <td>Для добавления кнопок на панели задач после стандартных.</td>
+            </tr>
+            <tr>
+                <td><code>TableHeaders</code></td>
+                <td><code>columns</code></td>
+                <td>Позволяет полностью переопределить заголовок таблицы.</td>
+            </tr>
+            <tr>
+                <td><code>Row</code></td>
+                <td><code>row</code></td>
+                <td>Позволяет полностью переопределить рендеринг строки таблицы.</td>
+            </tr>
+            <tr>
+                <td><code>RowSubSlot</code></td>
+                <td><code>row</code></td>
+                <td>Содержимое, которое отображается в под-пространстве при клике на строку (если <code>onRowClickOpenSlot: 'rowspace'</code>).</td>
+            </tr>
+            <tr>
+                <td><code>CustomRow</code></td>
+                <td><code>row, edit, remove, table</code></td>
+                <td>Используется для рендеринга каждой "строки", когда <code>displayMode: 'custom'</code>. Предоставляет функции для редактирования и удаления.</td>
+            </tr>
+            <tr>
+                <td><code>header</code></td>
+                <td>-</td>
+                <td>Для кастомизации заголовка модального окна добавления/редактирования.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="methods">Методы</h2>
+    <p>Для вызова методов необходимо получить доступ к экземпляру компонента через <code>ref</code>.</p>
+    <pre><code class="language-vue">&lt;FlameRestTable ref="flameTable" ... /&gt;
+
+&lt;script setup&gt;
+import { ref } from 'vue';
+const flameTable = ref(null);
+
+function someAction() {
+  // Экземпляр FlameTable доступен через flameTable.value.Table
+  flameTable.value.Table.update(); // Обновить данные в таблице
+}
+&lt;/script&gt;</code></pre>
+
+    <p>Основные доступные методы в <code>flameTable.value.Table</code>:</p>
+    <ul>
+        <li><span class="prop-name">update(params?, exportFilename?, from?)</span> - Запросить данные с сервера и обновить таблицу.</li>
+        <li><span class="prop-name">add()</span> - Программно открыть окно добавления новой записи.</li>
+        <li><span class="prop-name">save()</span> - Программно сохранить изменения в открытом окне редактирования.</li>
+        <li><span class="prop-name">remove(row)</span> - Удалить указанную строку.</li>
+        <li><span class="prop-name">getSelectedRows()</span> - Получить массив выбранных строк.</li>
+        <li><span class="prop-name">exportToXLS(onlySelected?)</span> - Экспортировать данные в XLSX.</li>
+        <li><span class="prop-name">exportToCSV(filename?, arr?)</span> - Экспортировать данные в CSV.</li>
+    </ul>
+
+    <h2 id="example">Полный пример</h2>
+    <p>Пример с настройкой нескольких колонок, фильтров, селекторов и использованием слота.</p>
+
+    <pre><code class="language-javascript">// component.vue
+import { FlameRestTable, TableOpts } from 'flameresttable';
+import User from '@/models/User';
+import Role from '@/models/Role'; // Предположим, есть модель ролей
+
+const tableOpts = new TableOpts();
+
+// Скрываем ненужные колонки
+tableOpts.delete(['auth_key', 'password_hash', 'password_reset_token']);
+
+// Настраиваем колонку ID
+tableOpts.set('id', { 
+    title: 'ID', 
+    Table: { width: 80 },
+    Filter: { type: 'number' } 
+});
+
+// Настраиваем имя
+tableOpts.set('username', {
+    title: 'Пользователь',
+    Table: {
+        isRawValue: true,
+        value: (row) => `&lt;b&gt;${row.username}&lt;/b&gt;` // Пример с HTML
+    },
+    Filter: { type: 'text' }
+});
+
+// Настраиваем email
+tableOpts.set('email', {
+    title: 'Email',
+    Filter: { isShow: false } // Скрываем фильтр для email
+});
+
+// Настраиваем статус
+tableOpts.set('status', {
+    title: 'Статус',
+    Filter: {
+        type: 'selector',
+        selector: { multiselect: false } // одиночный выбор
+    },
+    Selector: {
+        values: [ // Жестко заданные значения
+            { id: 10, title: 'Активен' },
+            { id: 9, title: 'Неактивен' },
+        ]
+    }
+});
+
+// Настраиваем связанную колонку ролей
+tableOpts.set('role_id', {
+    title: 'Роль',
+    Filter: { type: 'selector' },
+    Selector: {
+        model: Role // Автозагрузка из модели Role
+    }
+});
+
+// Добавляем виртуальную колонку для фильтра по дате
+tableOpts.addVirtual('date_range', {
+    title: 'Период регистрации',
+    Filter: {
+        type: 'daterange'
+    }
+});
+</code></pre>
+
+    <pre><code class="language-vue">&lt;!-- template --&gt;
+&lt;FlameRestTable :model="User" :opts="tableOpts"&gt;
+  &lt;template #otherButtons&gt;
+    &lt;button class="custom-button" @click="showSelected"&gt;Показать выбранных&lt;/button&gt;
+  &lt;/template&gt;
+&lt;/FlameRestTable&gt;
+</code></pre>
+
+</body>
+</html> 
