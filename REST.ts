@@ -1,5 +1,3 @@
-import { createHmac } from 'crypto';
-
 /**
  * Базовый ответ от сервера
  */
@@ -797,6 +795,9 @@ export class FLAMEREST {
         const key = encodedKey;
 
         if (typeof window === 'undefined') {
+            // Динамически импортируем модуль 'crypto' для Node.js, чтобы избежать ошибок на фронтенде,
+            // где этот модуль недоступен.
+            const { createHmac } = await import('crypto');
             const hash = createHmac('sha256', key).update(data).digest('hex');
             return Promise.resolve(hash);
         } else {

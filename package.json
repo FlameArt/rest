@@ -1,6 +1,6 @@
 {
   "name": "flamerest",
-  "version": "1.0.123",
+  "version": "1.0.125",
   "description": "",
   "main": "./REST.ts",
   "typings": "./REST.ts",
