@@ -489,7 +489,7 @@ export class FLAMEREST {
      * @param {number|string|null} insertAfter
      * @param {boolean|null} insertFirst
      */
-    async create<T>(table: string, values: object, appendTo: number | string | null = null, insertAfter: number | string | null = null, insertFirst: boolean | null = null): Promise<SavedObject<T>> {
+    async create<T>(table: string, values: object, appendTo: number | string | null = null, insertAfter: number | string | null = null, insertFirst: number | string | null = null): Promise<SavedObject<T>> {
         // Нормализуем имена таблиц
         table = table.replace(/_/g, "");
         // Подготовить значения
@@ -529,7 +529,7 @@ export class FLAMEREST {
      * @param {number|string|null} insertAfter
      * @param {boolean|null} insertFirst
      */
-    async edit<T>(table: string, ID: number | string, values: object, appendTo: number | string | null = null, insertAfter: number | string | null = null, insertFirst: boolean | null = null): Promise<SavedObject<T>> {
+    async edit<T>(table: string, ID: number | string, values: object, appendTo: number | string | null = null, insertAfter: number | string | null = null, insertFirst: number | string | null = null): Promise<SavedObject<T>> {
         // Нормализуем имена таблиц
         table = table.replace(/_/g, "");
         // Подготовить значения

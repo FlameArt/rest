@@ -1,9 +1,15 @@
 {
   "name": "flamerest",
-  "version": "1.0.119",
+  "version": "1.0.123",
   "description": "",
-  "main": "REST.js",
-  "typings": "./REST.d.ts",
+  "main": "./REST.ts",
+  "typings": "./REST.ts",
+  "exports": {
+    ".": {
+      "import": "./REST.ts",
+      "types": "./REST.ts"
+    }
+  },
   "scripts": {
     "publishx": "git push && npm --no-git-tag-version version patch && npm publish"
   },
@@ -22,5 +28,8 @@
   "bugs": {
     "url": "https://github.com/FlameArt/rest/issues"
   },
-  "homepage": "https://github.com/FlameArt/rest#readme"
+  "homepage": "https://github.com/FlameArt/rest#readme",
+  "devDependencies": {
+    "@types/node": "^24.0.3"
+  }
 }

@@ -5,7 +5,11 @@
       "label": "publish REST JS",
       "type": "shell",
       "command": "npm",
-      "args": ["run", "publishx"]
+      "args": [
+        "run",
+        "publishx"
+      ],
+      "problemMatcher": []
     }
   ]
 }
